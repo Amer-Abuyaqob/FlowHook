@@ -26,26 +26,28 @@ cd FlowHook
 npm install
 ```
 
-**Dependencies:** `pg`, `express`, `drizzle-orm`, `tsx`, `vitest`, `drizzle-kit` (see [.nvmrc](.nvmrc) for Node version).
+**Dependencies:** `pg`, `express`, `drizzle-orm`, `dotenv`, `tsx`, `vitest`, `drizzle-kit` (see [.nvmrc](.nvmrc) for Node version).
 
 Configure environment variables (in `.env` — do not commit):
 
-| Variable      | Purpose                      |
-| ------------- | ---------------------------- |
-| `DATABASE_URL`| PostgreSQL connection string |
-| `API_KEY`     | API key for protected routes |
-| `PORT`        | HTTP server port             |
+| Variable       | Purpose                      |
+| -------------- | ---------------------------- |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `API_KEY`      | API key for protected routes |
+| `PORT`         | HTTP server port             |
 
 ## 🚀 Quick Start
 
-Build and run:
+1. Set `DATABASE_URL` in `.env`.
+2. Run migrations and build:
 
 ```bash
+npm run db:migrate
 npm run build
 npm start
 ```
 
-The server runs migrations at startup, then listens on `http://localhost:{PORT}`. Health at `GET /api/healthz`.
+The API server is a placeholder; Express routes and health endpoint are coming next. Tests run with `npm test` (integration tests require `DATABASE_URL`).
 
 ## 🚀 Quick Start — API Usage
 
@@ -84,4 +86,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 — Dependencies installed (`pg`, `tsx`), TypeScript configured (ES2022, NodeNext). See [personal/PR.md](personal/PR.md) for recent PR details.
+**Last Updated:** Phase 1 — DB schema (pipelines, subscribers, jobs, delivery_attempts), Drizzle migrations, unit + integration tests, CI with Postgres. See [personal/PR.md](personal/PR.md) for recent PR details.

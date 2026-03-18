@@ -3,8 +3,9 @@
  * Used by drizzle-kit CLI (generate, push, introspect, etc.).
  *
  * Environment variables:
- * - DATABASE_URL - PostgreSQL connection string (defaults to local dev URL if unset)
+ * - DATABASE_URL or DB_URL - PostgreSQL connection string (required)
  */
+import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({

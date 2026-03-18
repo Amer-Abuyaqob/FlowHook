@@ -6,9 +6,31 @@ on:
   pull_request:
     branches: [main, master]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: flowhook
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      API_KEY: test-api-key
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,6 +45,9 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Run migrations
+        run: npm run db:migrate
 
       - name: Test
         run: npm test
