@@ -11,8 +11,8 @@
     "worker": "node dist/worker.js",
     "dev": "npm run build && node dist/index.js",
     "dev:worker": "npm run build && node dist/worker.js",
-    "db.generate": "drizzle-kit generate",
-    "db.migrate": "drizzle-kit migrate"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
