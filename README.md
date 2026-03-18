@@ -30,11 +30,11 @@ npm install
 
 Configure environment variables (in `.env` — do not commit):
 
-| Variable      | Purpose                      |
-| ------------- | ---------------------------- |
-| `DATABASE_URL`| PostgreSQL connection string |
-| `API_KEY`     | API key for protected routes |
-| `PORT`        | HTTP server port             |
+| Variable       | Purpose                      |
+| -------------- | ---------------------------- |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `API_KEY`      | API key for protected routes |
+| `PORT`         | HTTP server port             |
 
 ## 🚀 Quick Start
 
