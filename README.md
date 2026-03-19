@@ -28,26 +28,26 @@ npm install
 
 **Dependencies:** `pg`, `express`, `drizzle-orm`, `dotenv`, `tsx`, `vitest`, `drizzle-kit` (see [.nvmrc](.nvmrc) for Node version).
 
-Configure environment variables (in `.env` — do not commit):
+Configure environment variables (in `.env` — do not commit). Copy from `.env.example` if available:
 
-| Variable       | Purpose                      |
-| -------------- | ---------------------------- |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `API_KEY`      | API key for protected routes |
-| `PORT`         | HTTP server port             |
+| Variable       | Purpose                                      |
+| -------------- | -------------------------------------------- |
+| `API_KEY`      | API key for protected routes (required)       |
+| `DATABASE_URL` | PostgreSQL connection string (optional)      |
+| `PORT`         | HTTP server port (default 3000)              |
 
 ## 🚀 Quick Start
 
-1. Set `DATABASE_URL` in `.env`.
-2. Run migrations and build:
+1. Set `API_KEY` in `.env` (required). Set `DATABASE_URL` for DB features (optional).
+2. Run migrations (if using DB) and build:
 
 ```bash
-npm run db:migrate
+npm run db:migrate   # Only when DATABASE_URL is set
 npm run build
 npm start
 ```
 
-The API server is a placeholder; Express routes and health endpoint are coming next. Tests run with `npm test` (integration tests require `DATABASE_URL`).
+The API server is a placeholder; Express routes and health endpoint are coming next. Tests run with `npm test` (integration tests run when `DATABASE_URL` is set; otherwise skipped).
 
 ## 🚀 Quick Start — API Usage
 
@@ -86,4 +86,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 — DB schema (pipelines, subscribers, jobs, delivery_attempts), Drizzle migrations, unit + integration tests, CI with Postgres. See [personal/PR.md](personal/PR.md) for recent PR details.
+**Last Updated:** Phase 1 — Config module (typed PORT, db.url, API_KEY), optional DB connection, assertDbConnection, unit + integration tests. See [personal/PR.md](personal/PR.md) for recent PR details.
