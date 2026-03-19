@@ -42,6 +42,7 @@ jobs:
             --project "${{ secrets.GCP_PROJECT_ID }}" \
             --tag ${{ secrets.GCP_REGION || 'us-central1' }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REPO }}/flowhook:latest \
             . \
+            --suppress-logs \
             --quiet
 
       - name: Run migrations
