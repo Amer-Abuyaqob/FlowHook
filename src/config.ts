@@ -5,15 +5,24 @@
 import "dotenv/config";
 
 /**
+ * Database configuration.
+ *
+ * @property url - PostgreSQL connection string; undefined when not set.
+ */
+export type DbConfig = {
+  url: string | undefined;
+};
+
+/**
  * Typed application configuration.
  *
  * @property port - HTTP server port (default 3000).
- * @property databaseUrl - PostgreSQL connection string (required).
+ * @property db - Database config; url is undefined when DATABASE_URL is not set.
  * @property apiKey - API key for authenticated endpoints (required).
  */
 export type Config = {
   port: number;
-  databaseUrl: string;
+  db: DbConfig;
   apiKey: string;
 };
 
@@ -49,15 +58,27 @@ export function requireEnv(value: string | undefined, name: string): string {
 }
 
 /**
+ * Returns trimmed value or undefined when missing or empty.
+ *
+ * @param value - Raw env value.
+ * @returns Trimmed non-empty string, or undefined.
+ * @internal Exported for unit testing.
+ */
+export function getOptionalEnv(value: string | undefined): string | undefined {
+  const trimmed = value?.trim() ?? "";
+  return trimmed === "" ? undefined : trimmed;
+}
+
+/**
  * Loads and validates configuration from environment variables.
  *
  * @returns Validated config object.
- * @throws {Error} When DATABASE_URL or API_KEY is missing.
+ * @throws {Error} When API_KEY is missing.
  */
 function loadConfig(): Config {
   return {
     port: parsePort(process.env.PORT),
-    databaseUrl: requireEnv(process.env.DATABASE_URL, "DATABASE_URL"),
+    db: { url: getOptionalEnv(process.env.DATABASE_URL) },
     apiKey: requireEnv(process.env.API_KEY, "API_KEY"),
   };
 }
