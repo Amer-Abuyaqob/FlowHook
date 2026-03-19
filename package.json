@@ -14,8 +14,8 @@
     "test:coverage": "vitest --run --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\"",
+    "format:write": "prettier --write \"**/*.{ts,md,js,json,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,md,js,json,yml,yaml}\"",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
