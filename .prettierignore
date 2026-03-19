@@ -3,3 +3,4 @@ dist
 coverage
 drizzle
 *.min.js
+package-lock.json
