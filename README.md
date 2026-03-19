@@ -71,6 +71,9 @@ npm run build       # Compile TypeScript
 npm start           # Run production server
 npm run dev         # Build and run
 npm run test        # Run Vitest
+npm run lint        # Run ESLint
+npm run format:check # Check formatting with Prettier
+npm run test:coverage # Run tests with coverage
 npm run db.generate # Generate migrations
 npm run db.migrate  # Apply migrations
 ```
@@ -86,4 +89,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 — Config module (typed PORT, db.url, API_KEY), optional DB connection, assertDbConnection, unit + integration tests. See [personal/PR.md](personal/PR.md) for recent PR details.
+**Last Updated:** CI/CD and Phase 1 tooling — added Cloud Run CD workflow, split CI into tests + style checks, and introduced Prettier + ESLint + Vitest coverage scripts. See [personal/PR.md](personal/PR.md) for recent PR details.

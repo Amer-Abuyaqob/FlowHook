@@ -29,7 +29,7 @@ export const db = conn;
  * @throws {Error} When dbRef is undefined (DATABASE_URL not set).
  */
 export function assertDbConnection(
-  dbRef: typeof db,
+  dbRef: typeof db
 ): asserts dbRef is NonNullable<typeof db> {
   if (!dbRef) {
     throw new Error("Database connection is not available");
