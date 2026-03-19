@@ -37,13 +37,13 @@ describe("requireEnv", () => {
 
   it("throws when value is empty string", () => {
     expect(() => requireEnv("", "DATABASE_URL")).toThrow(
-      "Missing required env var: DATABASE_URL",
+      "Missing required env var: DATABASE_URL"
     );
   });
 
   it("throws when value is undefined", () => {
     expect(() => requireEnv(undefined, "API_KEY")).toThrow(
-      "Missing required env var: API_KEY",
+      "Missing required env var: API_KEY"
     );
   });
 

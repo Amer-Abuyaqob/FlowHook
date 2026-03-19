@@ -1,4 +1,5 @@
 # **Final Project:**
+
 Webhook-Driven Task Processing Pipeline
 
 ## Overview
@@ -41,14 +42,14 @@ When a webhook hits a pipeline's source URL, the service should **not** process 
 
 This project is intentionally underspecified. How you fill in the gaps is part of the evaluation.
 
-| Area | What we're looking at |
-| --- | --- |
-| **Architecture** | Clean separation of concerns, thoughtful schema design, sensible project structure |
-| **Reliability** | Retry logic, error handling, edge cases — what happens when things go wrong? |
-| **Code Quality** | Readable TypeScript, proper typing, consistent patterns |
-| **Infrastructure** | Docker setup works on first try, CI pipeline is meaningful |
-| **Documentation** | README is clear, design decisions are documented explained |
-| **Creativity & Polish** | What did you add beyond the minimum? How did you make it your own? |
+| Area                    | What we're looking at                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| **Architecture**        | Clean separation of concerns, thoughtful schema design, sensible project structure |
+| **Reliability**         | Retry logic, error handling, edge cases — what happens when things go wrong?       |
+| **Code Quality**        | Readable TypeScript, proper typing, consistent patterns                            |
+| **Infrastructure**      | Docker setup works on first try, CI pipeline is meaningful                         |
+| **Documentation**       | README is clear, design decisions are documented explained                         |
+| **Creativity & Polish** | What did you add beyond the minimum? How did you make it your own?                 |
 
 ---
 

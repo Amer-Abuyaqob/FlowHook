@@ -48,7 +48,7 @@ describe("db schema", () => {
 describe("assertDbConnection", () => {
   it("throws when passed undefined", () => {
     expect(() => assertDbConnection(undefined)).toThrow(
-      "Database connection is not available",
+      "Database connection is not available"
     );
   });
 });
