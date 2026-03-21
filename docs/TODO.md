@@ -218,34 +218,34 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.6 Slug Library
 
-- [ ] **Create `src/lib/slug.ts`**
-  - [ ] **Step 1:** Create folder `src/lib/` if it doesn't exist.
-  - [ ] **Step 2:** Create file `src/lib/slug.ts`.
-  - [ ] **Step 3:** Implement `generateSlug(name: string): string`:
-    - [ ] `name.toLowerCase().trim()`.
-    - [ ] Replace non-alphanumeric chars (spaces, underscores, etc.) with `-`: e.g. `replace(/[^a-z0-9]+/g, "-")`.
-    - [ ] Collapse multiple hyphens: `replace(/-+/g, "-")`.
-    - [ ] Trim leading/trailing hyphens: `replace(/^-|-$/g, "")`.
-    - [ ] If empty after that, return `"unnamed"` or similar fallback.
-  - [ ] **Step 4:** Implement `validateSlug(slug: string): boolean`:
-    - [ ] Regex: `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
-    - [ ] Return `regex.test(slug)`.
-  - [ ] **Step 5:** Implement `ensureUniqueSlug(slug: string, db: DbClient): Promise<string>`:
-    - [ ] Import db types and schema (e.g. `pipelines` from `../db/schema.js`).
-    - [ ] Query: `SELECT 1 FROM pipelines WHERE slug = $1 LIMIT 1` (or Drizzle `db.select().from(pipelines).where(eq(pipelines.slug, slug)).limit(1)`).
-    - [ ] If no row → return `slug`.
-    - [ ] If collision → try `slug + "-1"`, then `"-2"`, etc. until unique.
-  - [ ] **Step 6:** Type the `db` param: use the Drizzle client type from `src/db/index.js`.
-- [ ] **Unit test slug**
-  - [ ] **Step 7:** Create `src/lib/slug.test.ts`.
-  - [ ] **Step 8:** Test `generateSlug("My Stripe Orders")` → `"my-stripe-orders"`.
-  - [ ] **Step 9:** Test `generateSlug("  Hello   World  ")` → `"hello-world"`.
-  - [ ] **Step 10:** Test invalid chars: `generateSlug("Test@#$%")` → `"test"` (or `"unnamed"` if all stripped).
-  - [ ] **Step 11:** Test `validateSlug("my-pipeline")` → `true`.
-  - [ ] **Step 12:** Test `validateSlug("My-Pipeline")` → `false`.
-  - [ ] **Step 13:** Test `validateSlug("invalid slug")` → `false`.
-  - [ ] **Step 14:** Test `validateSlug("")` → `false`.
-  - [ ] **Step 15:** Test `ensureUniqueSlug` with mocked db: new slug returns as-is; existing slug returns `-1` suffix (requires DB mock or integration test).
+- [x] **Create `src/lib/slug.ts`**
+  - [x] **Step 1:** Create folder `src/lib/` if it doesn't exist.
+  - [x] **Step 2:** Create file `src/lib/slug.ts`.
+  - [x] **Step 3:** Implement `generateSlug(name: string): string`:
+    - [x] `name.toLowerCase().trim()`.
+    - [x] Replace non-alphanumeric chars (spaces, underscores, etc.) with `-`: e.g. `replace(/[^a-z0-9]+/g, "-")`.
+    - [x] Collapse multiple hyphens: `replace(/-+/g, "-")`.
+    - [x] Trim leading/trailing hyphens: `replace(/^-|-$/g, "")`.
+    - [x] If empty after that, return `"unnamed"` or similar fallback.
+  - [x] **Step 4:** Implement `validateSlug(slug: string): boolean`:
+    - [x] Regex: `^[a-z0-9]+(?:-[a-z0-9]+)*$`.
+    - [x] Return `regex.test(slug)`.
+  - [x] **Step 5:** Implement `ensureUniqueSlug(slug: string, db: DbClient): Promise<string>`:
+    - [x] Import db types and schema (e.g. `pipelines` from `../db/schema.js`).
+    - [x] Query: `SELECT 1 FROM pipelines WHERE slug = $1 LIMIT 1` (or Drizzle `db.select().from(pipelines).where(eq(pipelines.slug, slug)).limit(1)`).
+    - [x] If no row → return `slug`.
+    - [x] If collision → try `slug + "-1"`, then `"-2"`, etc. until unique.
+  - [x] **Step 6:** Type the `db` param: use the Drizzle client type from `src/db/index.js`.
+- [x] **Unit test slug**
+  - [x] **Step 7:** Create `src/lib/slug.test.ts`.
+  - [x] **Step 8:** Test `generateSlug("My Stripe Orders")` → `"my-stripe-orders"`.
+  - [x] **Step 9:** Test `generateSlug("  Hello   World  ")` → `"hello-world"`.
+  - [x] **Step 10:** Test invalid chars: `generateSlug("Test@#$%")` → `"test"` (or `"unnamed"` if all stripped).
+  - [x] **Step 11:** Test `validateSlug("my-pipeline")` → `true`.
+  - [x] **Step 12:** Test `validateSlug("My-Pipeline")` → `false`.
+  - [x] **Step 13:** Test `validateSlug("invalid slug")` → `false`.
+  - [x] **Step 14:** Test `validateSlug("")` → `false`.
+  - [x] **Step 15:** Test `ensureUniqueSlug` with mocked db: new slug returns as-is; existing slug returns `-1` suffix (requires DB mock or integration test).
 
 ---
 
