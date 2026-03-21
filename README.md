@@ -51,9 +51,9 @@ The server exposes a **health check** at **`GET /api/healthz`** (plain text **`O
 
 ## 🚀 Quick Start — API Usage
 
-| Method | Path            | Description        |
-| ------ | --------------- | ------------------ |
-| `GET`  | `/api/healthz`  | Liveness (text OK) |
+| Method | Path           | Description        |
+| ------ | -------------- | ------------------ |
+| `GET`  | `/api/healthz` | Liveness (text OK) |
 
 Example:
 
