@@ -2,7 +2,7 @@
 
 Deeply detailed step-by-step checklist. Work top-to-bottom within each phase. Check off items as you complete them.
 
-**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, Docker, and CI/CD are done. Auth, pipeline APIs, webhooks, and worker processing are pending.
+**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, and CI/CD are done. Pipeline APIs, webhooks, and worker processing are pending.
 
 ---
 
@@ -159,7 +159,7 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.4 Health Endpoint
 
-- [ ] **Create `src/routes/health.ts`**
+- [x] **Create `src/routes/health.ts`**
   - [x] **Step 1:** Create folder `src/routes/` if it doesn't exist.
   - [x] **Step 2:** Create file `src/routes/health.ts`.
   - [x] **Step 3:** Define and export a Router:
@@ -182,37 +182,37 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.5 Auth Middleware
 
-- [ ] **Create `src/auth/validate.ts`**
-  - [ ] **Step 1:** Create folder `src/auth/` if it doesn't exist.
-  - [ ] **Step 2:** Create file `src/auth/validate.ts`.
-  - [ ] **Step 3:** Define the `Identity` interface:
+- [x] **Create `src/auth/validate.ts`**
+  - [x] **Step 1:** Create folder `src/auth/` if it doesn't exist.
+  - [x] **Step 2:** Create file `src/auth/validate.ts`.
+  - [x] **Step 3:** Define the `Identity` interface:
     ```ts
     export interface Identity {
       type: "api_key";
     }
     ```
-  - [ ] **Step 4:** Implement `validateAuth(req: Request)`:
-    - [ ] Get `apiKey` from `config.apiKey` (import from `../config.js`).
-    - [ ] Check `req.headers.authorization` — if it starts with `Bearer `, extract the token (substring after "Bearer ").
-    - [ ] Else check `req.headers["x-api-key"]` (case-insensitive; Express normalizes to lowercase).
-    - [ ] If no key found → return `{ valid: false }`.
-    - [ ] If key found but doesn't match `apiKey` → return `{ valid: false }`.
-    - [ ] If match → return `{ valid: true, identity: { type: "api_key" } }`.
-  - [ ] **Step 5:** Function signature: `validateAuth(req: Request): Promise<{ valid: boolean; identity?: Identity }>` (can be sync; return a resolved Promise for future extensibility).
-- [ ] **Create auth middleware**
-  - [ ] **Step 6:** In the same file or new `src/auth/middleware.ts`, export `authMiddleware`:
-    - [ ] Call `validateAuth(req)`.
-    - [ ] If `!result.valid` → `res.status(401).json({ error: "Unauthorized" })` and return (don't call `next()`).
-    - [ ] If valid → `(req as any).identity = result.identity; next();`
-  - [ ] **Step 7:** Add a type for `req.identity` via declaration merging or use a typed `Request` extension.
-- [ ] **Unit test auth**
-  - [ ] **Step 8:** Create `src/auth/validate.test.ts` (or `auth.test.ts`).
-  - [ ] **Step 9:** Set `process.env.API_KEY = "test-key"` in a `beforeEach` (and restore after). Or mock config.
-  - [ ] **Step 10:** Test: `Authorization: Bearer test-key` → `valid: true`.
-  - [ ] **Step 11:** Test: `X-API-Key: test-key` → `valid: true`.
-  - [ ] **Step 12:** Test: missing header → `valid: false`.
-  - [ ] **Step 13:** Test: wrong key → `valid: false`.
-  - [ ] **Step 14:** Test: malformed `Authorization: InvalidFormat` → `valid: false`.
+  - [x] **Step 4:** Implement `validateAuth(req: Request)`:
+    - [x] Get `apiKey` from `config.apiKey` (import from `../config.js`).
+    - [x] Check `req.headers.authorization` — if it starts with `Bearer `, extract the token (substring after "Bearer ").
+    - [x] Else check `req.headers["x-api-key"]` (case-insensitive; Express normalizes to lowercase).
+    - [x] If no key found → return `{ valid: false }`.
+    - [x] If key found but doesn't match `apiKey` → return `{ valid: false }`.
+    - [x] If match → return `{ valid: true, identity: { type: "api_key" } }`.
+  - [x] **Step 5:** Function signature: `validateAuth(req: Request): Promise<{ valid: boolean; identity?: Identity }>` (can be sync; return a resolved Promise for future extensibility).
+- [x] **Create auth middleware**
+  - [x] **Step 6:** In the same file or new `src/auth/middleware.ts`, export `authMiddleware`:
+    - [x] Call `validateAuth(req)`.
+    - [x] If `!result.valid` → `res.status(401).json({ error: "Unauthorized" })` and return (don't call `next()`).
+    - [x] If valid → `(req as any).identity = result.identity; next();`
+  - [x] **Step 7:** Add a type for `req.identity` via declaration merging or use a typed `Request` extension.
+- [x] **Unit test auth**
+  - [x] **Step 8:** Create `src/auth/validate.test.ts` (or `auth.test.ts`).
+  - [x] **Step 9:** Set `process.env.API_KEY = "test-key"` in a `beforeEach` (and restore after). Or mock config.
+  - [x] **Step 10:** Test: `Authorization: Bearer test-key` → `valid: true`.
+  - [x] **Step 11:** Test: `X-API-Key: test-key` → `valid: true`.
+  - [x] **Step 12:** Test: missing header → `valid: false`.
+  - [x] **Step 13:** Test: wrong key → `valid: false`.
+  - [x] **Step 14:** Test: malformed `Authorization: InvalidFormat` → `valid: false`.
 
 ---
 
@@ -421,13 +421,13 @@ These are installed via `npm install` when you create the project — no global 
 - **Unit tests** (partial)
   - [x] Config parsing (`config.test.ts`)
   - [x] DB helpers (`db/db.test.ts`)
-  - [ ] **Auth validation** (`src/auth/validate.test.ts`)
-    - [ ] **Step 1:** Create test file. Use `describe("validateAuth", () => { ... })`.
-    - [ ] **Step 2:** Mock or set `process.env.API_KEY = "secret"` in beforeEach; restore in afterEach.
-    - [ ] **Step 3:** Build mock req: `{ headers: { authorization: "Bearer secret" } }`. Call `validateAuth(mockReq)`. Expect `{ valid: true, identity: { type: "api_key" } }`.
-    - [ ] **Step 4:** Same with `headers: { "x-api-key": "secret" }`.
-    - [ ] **Step 5:** `headers: {}` → `{ valid: false }`.
-    - [ ] **Step 6:** Wrong key → `{ valid: false }`.
+  - [x] **Auth validation** (`src/auth/validate.test.ts`)
+    - [x] **Step 1:** Create test file. Use `describe("validateAuth", () => { ... })`.
+    - [x] **Step 2:** Mock or set `process.env.API_KEY = "secret"` in beforeEach; restore in afterEach.
+    - [x] **Step 3:** Build mock req: `{ headers: { authorization: "Bearer secret" } }`. Call `validateAuth(mockReq)`. Expect `{ valid: true, identity: { type: "api_key" } }`.
+    - [x] **Step 4:** Same with `headers: { "x-api-key": "secret" }`.
+    - [x] **Step 5:** `headers: {}` → `{ valid: false }`.
+    - [x] **Step 6:** Wrong key → `{ valid: false }`.
   - [ ] **Slug generation and validation** (`src/lib/slug.test.ts`)
     - [ ] **Step 1:** Test `generateSlug("My Stripe Orders")` → `"my-stripe-orders"`.
     - [ ] **Step 2:** Test `generateSlug("  spaces  ")` → `"spaces"`.
@@ -436,7 +436,7 @@ These are installed via `npm install` when you create the project — no global 
 - **Integration tests** (partial)
   - [x] DB integration (`db/db.integration.test.ts` — conditional on DATABASE_URL)
   - [x] Smoke test (`smoke.test.ts`)
-  - [ ] **Health endpoint**: `GET /api/healthz` → 200, body "OK".
+  - [x] **Health endpoint**: `GET /api/healthz` → 200, body "OK".
   - [ ] **Pipeline CRUD**: See 1.8 Step 10–18.
   - [ ] **Subscriber CRUD**: See 1.10 Step 5–9.
   - [ ] **Webhook ingestion**: See 1.12 Step 6–11.

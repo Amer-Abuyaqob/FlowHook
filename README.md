@@ -47,7 +47,7 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves a **README-aligned** static page (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). Further REST routes (pipelines, webhooks, auth) follow the roadmap. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves a **README-aligned** static page (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). **API key auth** (Bearer or X-API-Key) and **central error middleware** are implemented; auth will be applied to pipeline/job routes when those are added. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
 
 ## 🚀 Quick Start — API Usage
 
@@ -69,14 +69,14 @@ See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
 
 ## Tech Stack
 
-| Layer     | Tech        |
-| --------- | ----------- |
-| Runtime   | Node.js     |
-| Language  | TypeScript  |
-| Framework | Express.js  |
-| Database  | PostgreSQL  |
-| ORM       | Drizzle     |
-| Auth      | JWT, Argon2 |
+| Layer     | Tech                                             |
+| --------- | ------------------------------------------------ |
+| Runtime   | Node.js                                          |
+| Language  | TypeScript                                       |
+| Framework | Express.js                                       |
+| Database  | PostgreSQL                                       |
+| ORM       | Drizzle                                          |
+| Auth      | API key (Bearer, X-API-Key) — JWT/Argon2 planned |
 
 ## Scripts
 
@@ -103,4 +103,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Static app at **`GET /app/`** mirrors **`README.md`** in the browser; **`styles.css`** (dark theme) lives next to **`index.html`** under **`src/app`**. **`GET /`** → **`/app/`** redirect, exported **`APP_ROUTE`**, Supertest for redirect + HTML. Health check at **`GET /api/healthz`**. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1.5 auth middleware done. API key validation (Bearer, X-API-Key), `authMiddleware`, and central `errorMiddleware` for JSON error responses. `req.identity` typed via Express augmentation. Auth not yet mounted on routes. See [personal/PR.md](personal/PR.md) for PR notes.
