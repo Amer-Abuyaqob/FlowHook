@@ -21,6 +21,9 @@ if (config.db.url) {
 /** Drizzle ORM client with schema for typed queries; undefined when DATABASE_URL is not set. */
 export const db = conn;
 
+/** Type for the Drizzle client when connection is available. Use for functions that require a connected db. */
+export type DbClient = NonNullable<typeof db>;
+
 /**
  * Asserts that the database connection is available.
  * Call with the db export to narrow its type for subsequent use.

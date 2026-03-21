@@ -103,4 +103,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1.5 auth middleware done. API key validation (Bearer, X-API-Key), `authMiddleware`, and central `errorMiddleware` for JSON error responses. `req.identity` typed via Express augmentation. Auth not yet mounted on routes. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1.6 slug library done. `generateSlug`, `validateSlug`, `ensureUniqueSlug` in `src/lib/slug.ts`; pipeline queries in `src/db/queries/pipelines.ts` (`getPipelineBySlug`, `existsPipelineWithSlug`). Ready for Pipeline Service (1.7). See [personal/PR.md](personal/PR.md) for PR notes.
