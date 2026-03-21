@@ -24,8 +24,12 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      # Node 24 ships npm 11, which can fail `npm ci` with EBADPLATFORM on optional
+      # `@esbuild/*` platform packages listed in the lockfile. npm 10 skips non-matching optionals.
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install -g npm@10
+          npm ci
 
       - name: Run vitest unit tests
         run: npm test
@@ -48,7 +52,9 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install -g npm@10
+          npm ci
 
       - name: Run formatting check
         run: npm run format:check

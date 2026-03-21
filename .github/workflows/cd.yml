@@ -25,8 +25,11 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      # Same as CI: npm 11 + `npm ci` can hit EBADPLATFORM on optional `@esbuild/*` entries.
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install -g npm@10
+          npm ci
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
