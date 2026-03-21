@@ -24,8 +24,10 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      # `npm ci` fails with EBADPLATFORM on optional nested `@esbuild/*` entries (e.g. aix-ppc64)
+      # that do not match the runner OS. `npm install` respects the lockfile and skips those optionals.
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Run vitest unit tests
         run: npm test
@@ -48,7 +50,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Run formatting check
         run: npm run format:check

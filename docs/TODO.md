@@ -159,10 +159,10 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.4 Health Endpoint
 
-- [ ] **Create `src/routes/health.ts`** _(partial: `GET /` and `GET /health` exist in index.ts, but spec requires `GET /api/healthz` plain text)_
-  - [ ] **Step 1:** Create folder `src/routes/` if it doesn't exist.
-  - [ ] **Step 2:** Create file `src/routes/health.ts`.
-  - [ ] **Step 3:** Define and export a Router:
+- [ ] **Create `src/routes/health.ts`**
+  - [x] **Step 1:** Create folder `src/routes/` if it doesn't exist.
+  - [x] **Step 2:** Create file `src/routes/health.ts`.
+  - [x] **Step 3:** Define and export a Router:
     ```ts
     import { Router } from "express";
     const router = Router();
@@ -171,12 +171,12 @@ These are installed via `npm install` when you create the project — no global 
     });
     export default router;
     ```
-  - [ ] **Step 4:** Mount with `app.use("/api", healthRouter)` so `GET /api/healthz` returns plain text `OK`.
-- [ ] **Wire up in main server**
-  - [ ] **Step 5:** In `src/index.ts`, add `import healthRouter from "./routes/health.js";`
-  - [ ] **Step 6:** Add `app.use("/api", healthRouter);` before `app.listen`.
-  - [ ] **Step 7:** Keep `app.listen(config.port, ...)`.
-  - [ ] **Step 8:** Verify: `curl http://localhost:3000/api/healthz` returns `OK` (plain text).
+  - [x] **Step 4:** Mount with `app.use("/api", healthRouter)` so `GET /api/healthz` returns plain text `OK`.
+- [x] **Wire up in main server**
+  - [x] **Step 5:** In `src/index.ts`, add `import healthRouter from "./routes/health.js";`
+  - [x] **Step 6:** Add `app.use("/api", healthRouter);` before `app.listen`.
+  - [x] **Step 7:** Keep `app.listen(config.port, ...)`.
+  - [x] **Step 8:** Verify: `curl http://localhost:3000/api/healthz` returns `OK` (plain text).
 
 ---
 

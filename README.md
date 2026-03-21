@@ -47,11 +47,21 @@ npm run build
 npm start
 ```
 
-The API server is a placeholder; Express routes and health endpoint are coming next. Tests run with `npm test` (integration tests run when `DATABASE_URL` is set; otherwise skipped).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). Further REST routes (pipelines, webhooks, auth) follow the roadmap. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
 
 ## 🚀 Quick Start — API Usage
 
-API endpoints will be available once the base phase is complete. See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the roadmap.
+| Method | Path           | Description        |
+| ------ | -------------- | ------------------ |
+| `GET`  | `/api/healthz` | Liveness (text OK) |
+
+Example:
+
+```bash
+curl http://localhost:3000/api/healthz
+```
+
+See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
 
 ## Tech Stack
 
@@ -89,4 +99,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** CI/CD and Phase 1 tooling — added Cloud Run CD workflow, split CI into tests + style checks, and introduced Prettier + ESLint + Vitest coverage scripts. See [personal/PR.md](personal/PR.md) for recent PR details.
+**Last Updated:** Health check endpoint (`GET /api/healthz`), Express `createApp` + `/api` router mount, HTTP helpers (`errors`, `headers`, `json`), Supertest integration tests, and `isMainModule` guard so tests can import the app without binding a port. See [personal/PR.md](personal/PR.md) for the latest PR notes.
