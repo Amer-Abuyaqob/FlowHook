@@ -1,9 +1,23 @@
 /**
  * FlowHook API entry point.
  */
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express from "express";
 import { config } from "./config.js";
 import healthRouter from "./routes/health.js";
+
+/**
+ * True when this file is the process entry script (not when imported by tests or other modules).
+ *
+ * @returns Whether `main()` should run for this process.
+ */
+function isMainModule(): boolean {
+  const entryPath = process.argv[1];
+  if (!entryPath) return false;
+  const thisFile = path.resolve(fileURLToPath(import.meta.url));
+  return thisFile === path.resolve(entryPath);
+}
 
 /**
  * URL prefix for REST API routes; combined with paths on each mounted router (e.g. `/api` + `/healthz`).
@@ -48,8 +62,10 @@ export async function main(): Promise<void> {
   });
 }
 
-main().catch((e: unknown) => {
-  const message = e instanceof Error ? e.message : String(e);
-  console.error("Error:", message);
-  process.exit(1);
-});
+if (isMainModule()) {
+  main().catch((e: unknown) => {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error("Error:", message);
+    process.exit(1);
+  });
+}
