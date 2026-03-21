@@ -47,7 +47,7 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves a small static page from **`src/app`** (copied to **`dist/client`** on build). Further REST routes (pipelines, webhooks, auth) follow the roadmap. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves a **README-aligned** static page (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). Further REST routes (pipelines, webhooks, auth) follow the roadmap. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
 
 ## 🚀 Quick Start — API Usage
 
@@ -103,4 +103,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Static web UI at **`GET /app/`** (files in **`src/app`**, built to **`dist/client`**), **`GET /`** → **`/app/`** redirect, exported **`APP_ROUTE`**, and Supertest coverage for redirect + HTML. Health check remains at **`GET /api/healthz`**. See [personal/PR.md](personal/PR.md) for the latest PR notes.
+**Last Updated:** Static app at **`GET /app/`** mirrors **`README.md`** in the browser; **`styles.css`** (dark theme) lives next to **`index.html`** under **`src/app`**. **`GET /`** → **`/app/`** redirect, exported **`APP_ROUTE`**, Supertest for redirect + HTML. Health check at **`GET /api/healthz`**. See [personal/PR.md](personal/PR.md) for PR notes.
