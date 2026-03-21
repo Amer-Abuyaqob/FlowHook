@@ -1,5 +1,7 @@
 /**
- * FlowHook API entry point.
+ * HTTP server entry: Express app factory, static web UI under {@link APP_ROUTE}, and REST API under `/api`.
+ *
+ * Running `node dist/index.js` serves assets from `dist/client`; `tsx` dev serves from `src/app`.
  */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,15 +27,46 @@ function isMainModule(): boolean {
 const API_PREFIX = "/api";
 
 /**
- * Creates and configures the Express application with JSON parsing and registered routes.
+ * URL path prefix for the static web UI (mount path for `express.static`).
+ */
+export const APP_ROUTE = "/app";
+
+/**
+ * Resolves the directory containing static web assets for the {@link APP_ROUTE} UI.
  *
- * @returns Express application instance that is not yet listening for connections.
+ * @returns Absolute path to `dist/client` when running from compiled `dist/`, or `src/app` during local development.
+ */
+function getClientStaticDir(): string {
+  const thisDir = path.dirname(fileURLToPath(import.meta.url));
+  return path.basename(thisDir) === "dist"
+    ? path.join(thisDir, "client")
+    : path.join(thisDir, "app");
+}
+
+/**
+ * Registers the static web UI: redirects `/` to `{@link APP_ROUTE}/` and serves files from the client directory.
+ *
+ * @param app - Express application instance.
+ * @returns void
+ */
+function registerWebUi(app: express.Express): void {
+  app.get("/", (_req, res) => {
+    res.redirect(302, `${APP_ROUTE}/`);
+  });
+  app.use(APP_ROUTE, express.static(getClientStaticDir()));
+}
+
+/**
+ * Builds the Express application with JSON middleware, web UI, and API routes.
+ *
+ * @returns Configured Express application instance (not listening yet).
  * @example
  * const app = createApp();
  */
 export function createApp(): express.Express {
   const app = express();
   app.use(express.json());
+  registerWebUi(app);
   registerApiRoutes(app);
   return app;
 }

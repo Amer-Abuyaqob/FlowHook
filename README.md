@@ -47,18 +47,22 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). Further REST routes (pipelines, webhooks, auth) follow the roadmap. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves a small static page from **`src/app`** (copied to **`dist/client`** on build). Further REST routes (pipelines, webhooks, auth) follow the roadmap. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
 
 ## 🚀 Quick Start — API Usage
 
-| Method | Path           | Description        |
-| ------ | -------------- | ------------------ |
-| `GET`  | `/api/healthz` | Liveness (text OK) |
+| Method | Path           | Description                |
+| ------ | -------------- | -------------------------- |
+| `GET`  | `/`            | Redirects to `/app/` (302) |
+| `GET`  | `/app/`        | Static web UI (HTML)       |
+| `GET`  | `/api/healthz` | Liveness (text OK)         |
 
-Example:
+Examples:
 
 ```bash
-curl http://localhost:3000/api/healthz
+curl http://localhost:8080/api/healthz
+curl -sI http://localhost:8080/
+curl http://localhost:8080/app/
 ```
 
 See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
@@ -77,7 +81,7 @@ See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
 ## Scripts
 
 ```bash
-npm run build       # Compile TypeScript
+npm run build       # Compile TypeScript and copy src/app → dist/client
 npm start           # Run production server
 npm run dev         # Build and run
 npm run test        # Run Vitest
@@ -99,4 +103,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Health check endpoint (`GET /api/healthz`), Express `createApp` + `/api` router mount, HTTP helpers (`errors`, `headers`, `json`), Supertest integration tests, and `isMainModule` guard so tests can import the app without binding a port. See [personal/PR.md](personal/PR.md) for the latest PR notes.
+**Last Updated:** Static web UI at **`GET /app/`** (files in **`src/app`**, built to **`dist/client`**), **`GET /`** → **`/app/`** redirect, exported **`APP_ROUTE`**, and Supertest coverage for redirect + HTML. Health check remains at **`GET /api/healthz`**. See [personal/PR.md](personal/PR.md) for the latest PR notes.
