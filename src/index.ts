@@ -3,10 +3,12 @@
  *
  * Running `node dist/index.js` serves assets from `dist/client`; `tsx` dev serves from `src/app`.
  */
+import "./types/express-augment.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import { config } from "./config.js";
+import { errorMiddleware } from "./http/errorMiddleware.js";
 import healthRouter from "./routes/health.js";
 
 /**
@@ -68,6 +70,7 @@ export function createApp(): express.Express {
   app.use(express.json());
   registerWebUi(app);
   registerApiRoutes(app);
+  app.use(errorMiddleware);
   return app;
 }
 
