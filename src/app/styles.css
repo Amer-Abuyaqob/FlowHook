@@ -13,6 +13,10 @@
   --elevated: #21262d;
   --link: #58a6ff;
   --link-hover: #79c0ff;
+  --badge-available-bg: #238636;
+  --badge-available-text: #7ee787;
+  --badge-planned-bg: rgba(139, 148, 158, 0.25);
+  --badge-planned-text: #8b949e;
 }
 
 *,
@@ -199,4 +203,31 @@ hr {
   background: var(--link-hover);
   color: var(--bg) !important;
   text-decoration: none !important;
+}
+
+/* Endpoint status badges */
+.badge {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  margin-left: 0.5em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  vertical-align: middle;
+}
+
+.badge--available {
+  background: var(--badge-available-bg);
+  color: var(--badge-available-text);
+}
+
+.badge--planned {
+  background: var(--badge-planned-bg);
+  color: var(--badge-planned-text);
+}
+
+.badge-legend {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
 }

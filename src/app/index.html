@@ -133,9 +133,20 @@
           <hr />
 
           <h3 id="endpoints">Endpoints</h3>
+          <p class="badge-legend">
+            <span class="badge badge--available">Available</span> Implemented
+            and working
+            <span class="badge badge--planned" style="margin-left: 1rem"
+              >Planned</span
+            >
+            Not yet implemented
+          </p>
 
           <h4 id="health">Health</h4>
-          <h5><code>GET /api/healthz</code></h5>
+          <h5>
+            <code>GET /api/healthz</code>
+            <span class="badge badge--available">Available</span>
+          </h5>
           <p>Readiness/health check. Returns <code>OK</code> as plain text.</p>
           <table>
             <thead>
@@ -157,7 +168,10 @@
           <h4 id="pipelines">Pipelines</h4>
           <p>All pipeline endpoints require API key authentication.</p>
 
-          <h5><code>POST /api/pipelines</code></h5>
+          <h5>
+            <code>POST /api/pipelines</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>
             Create a new pipeline. Returns the full pipeline including
             <code>slug</code> and <code>webhookUrl</code>.
@@ -252,7 +266,10 @@
             </tbody>
           </table>
 
-          <h5><code>GET /api/pipelines</code></h5>
+          <h5>
+            <code>GET /api/pipelines</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>List all pipelines.</p>
           <table>
             <thead>
@@ -269,7 +286,10 @@
             </tbody>
           </table>
 
-          <h5><code>GET /api/pipelines/:id</code></h5>
+          <h5>
+            <code>GET /api/pipelines/:id</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>Get a single pipeline by ID.</p>
           <table>
             <thead>
@@ -290,7 +310,10 @@
             </tbody>
           </table>
 
-          <h5><code>PUT /api/pipelines/:id</code></h5>
+          <h5>
+            <code>PUT /api/pipelines/:id</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>Update a pipeline. All fields are optional (partial update).</p>
           <p><strong>Request body:</strong></p>
           <pre><code>{
@@ -326,7 +349,10 @@
             </tbody>
           </table>
 
-          <h5><code>DELETE /api/pipelines/:id</code></h5>
+          <h5>
+            <code>DELETE /api/pipelines/:id</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>Delete a pipeline. Cascades to subscribers and related jobs.</p>
           <table>
             <thead>
@@ -352,7 +378,10 @@
           <h4 id="subscribers">Subscribers</h4>
           <p>Manage destination URLs for a pipeline. All require API key.</p>
 
-          <h5><code>POST /api/pipelines/:id/subscribers</code></h5>
+          <h5>
+            <code>POST /api/pipelines/:id/subscribers</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>Add a subscriber (destination URL) to a pipeline.</p>
           <p><strong>Request body:</strong></p>
           <pre><code>{
@@ -425,6 +454,7 @@
 
           <h5>
             <code>DELETE /api/pipelines/:id/subscribers/:subscriberId</code>
+            <span class="badge badge--planned">Planned</span>
           </h5>
           <p>Remove a subscriber from a pipeline.</p>
           <table>
@@ -454,7 +484,10 @@
           <h4 id="jobs">Jobs</h4>
           <p>Query job status and results. All require API key.</p>
 
-          <h5><code>GET /api/jobs</code></h5>
+          <h5>
+            <code>GET /api/jobs</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>List jobs with optional filters.</p>
           <p><strong>Query parameters:</strong></p>
           <table>
@@ -524,7 +557,10 @@
   }
 ]</code></pre>
 
-          <h5><code>GET /api/jobs/:id</code></h5>
+          <h5>
+            <code>GET /api/jobs/:id</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>Get a single job by ID, including delivery attempts.</p>
           <p>
             <strong>Response (200):</strong> Same shape as job object in list,
@@ -574,7 +610,10 @@
           <hr />
 
           <h4 id="webhooks">Webhooks</h4>
-          <h5><code>POST /webhooks/:slug</code></h5>
+          <h5>
+            <code>POST /webhooks/:slug</code>
+            <span class="badge badge--planned">Planned</span>
+          </h5>
           <p>
             Ingest a webhook payload. <strong>No authentication</strong> — the
             slug identifies the pipeline. Returns 202 immediately after
