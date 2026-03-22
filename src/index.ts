@@ -10,6 +10,7 @@ import express from "express";
 import { config } from "./config.js";
 import { errorMiddleware } from "./http/errorMiddleware.js";
 import healthRouter from "./routes/health.js";
+import pipelinesRouter from "./routes/pipelines.js";
 
 /**
  * True when this file is the process entry script (not when imported by tests or other modules).
@@ -82,6 +83,7 @@ export function createApp(): express.Express {
  */
 function registerApiRoutes(app: express.Express): void {
   app.use(API_PREFIX, healthRouter);
+  app.use(API_PREFIX, pipelinesRouter);
 }
 
 /**
