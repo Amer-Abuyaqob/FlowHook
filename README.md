@@ -30,11 +30,12 @@ npm install
 
 Configure environment variables (in `.env` — do not commit). Copy from `.env.example` if available:
 
-| Variable       | Purpose                                 |
-| -------------- | --------------------------------------- |
-| `API_KEY`      | API key for protected routes (required) |
-| `DATABASE_URL` | PostgreSQL connection string (optional) |
-| `PORT`         | HTTP server port (default 3000)         |
+| Variable       | Purpose                                                      |
+| -------------- | ------------------------------------------------------------ |
+| `API_KEY`      | API key for protected routes (required)                      |
+| `DATABASE_URL` | PostgreSQL connection string (required for CRUD)             |
+| `BASE_URL`     | Base URL for webhook URLs (default: `http://localhost:PORT`) |
+| `PORT`         | HTTP server port (default 3000)                              |
 
 ## 🚀 Quick Start
 
@@ -47,22 +48,27 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) and **central error middleware** are implemented; auth will be applied to pipeline/job routes when those are added. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8) and **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
 
 ## 🚀 Quick Start — API Usage
 
-| Method | Path           | Description                |
-| ------ | -------------- | -------------------------- |
-| `GET`  | `/`            | Redirects to `/app/` (302) |
-| `GET`  | `/app/`        | API documentation (HTML)   |
-| `GET`  | `/api/healthz` | Liveness (text OK)         |
+| Method   | Path                 | Description                     |
+| -------- | -------------------- | ------------------------------- |
+| `GET`    | `/`                  | Redirects to `/app/` (302)      |
+| `GET`    | `/app/`              | API documentation (HTML)        |
+| `GET`    | `/api/healthz`       | Liveness (text OK)              |
+| `POST`   | `/api/pipelines`     | Create pipeline (auth required) |
+| `GET`    | `/api/pipelines`     | List pipelines (auth required)  |
+| `GET`    | `/api/pipelines/:id` | Get pipeline by id (auth)       |
+| `PUT`    | `/api/pipelines/:id` | Update pipeline (auth)          |
+| `DELETE` | `/api/pipelines/:id` | Delete pipeline (auth)          |
 
 Examples:
 
 ```bash
-curl http://localhost:8080/api/healthz
-curl -sI http://localhost:8080/
-curl http://localhost:8080/app/
+curl http://localhost:3000/api/healthz
+curl -H "Authorization: Bearer $API_KEY" http://localhost:3000/api/pipelines
+curl http://localhost:3000/app/
 ```
 
 See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
@@ -103,4 +109,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Initial API documentation. `docs/API.md` documents all endpoints (health, pipelines, subscribers, jobs, webhooks). Web UI at `/app/` mirrors the API docs with status badges (Available/Planned). Ready for Pipeline Service (1.7). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Pipeline CRUD API implemented (sections 1.7, 1.8). Endpoints: POST/GET/PUT/DELETE `/api/pipelines` with auth, validation, serialization, and `webhookUrl`. See [personal/PR.md](personal/PR.md) for PR notes.
