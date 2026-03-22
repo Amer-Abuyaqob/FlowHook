@@ -2,7 +2,7 @@
 
 Deeply detailed step-by-step checklist. Work top-to-bottom within each phase. Check off items as you complete them.
 
-**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, and CI/CD are done. Pipeline APIs, webhooks, and worker processing are pending.
+**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, and pipeline APIs are done. Subscriber routes, webhooks, and worker processing are pending.
 
 ---
 
@@ -251,57 +251,57 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.7 Pipeline Service
 
-- [ ] **Create `src/services/pipeline.ts`**
-  - [ ] **Step 1:** Create folder `src/services/` if it doesn't exist.
-  - [ ] **Step 2:** Create file `src/services/pipeline.ts`.
-  - [ ] **Step 3:** Import `db`, `assertDbConnection`, `pipelines`, `eq`, and `generateSlug`, `ensureUniqueSlug`, `validateSlug` from lib.
-  - [ ] **Step 4:** Implement `createPipeline(name, action_type, action_config)`:
-    - [ ] Assert db connection.
-    - [ ] Validate `action_config` per action_type (see below).
-    - [ ] `baseSlug = generateSlug(name)`.
-    - [ ] `slug = await ensureUniqueSlug(baseSlug, db)`.
-    - [ ] Insert: `db.insert(pipelines).values({ slug, name, actionType: action_type, actionConfig: action_config }).returning({ id, slug, ... })`.
-    - [ ] Return full pipeline row.
-  - [ ] **Step 5:** Implement `listPipelines()`: `db.select().from(pipelines)`.
-  - [ ] **Step 6:** Implement `getPipelineById(id)`: `db.select().from(pipelines).where(eq(pipelines.id, id)).limit(1)`; return first row or null.
-  - [ ] **Step 7:** Implement `getPipelineBySlug(slug)`: same pattern, `eq(pipelines.slug, slug)`.
-  - [ ] **Step 8:** Implement `updatePipeline(id, updates)`: `db.update(pipelines).set({ ...updates, updatedAt: new Date() }).where(eq(pipelines.id, id)).returning()`.
-  - [ ] **Step 9:** Implement `deletePipeline(id)`: `db.delete(pipelines).where(eq(pipelines.id, id)).returning()`; cascade handles subscribers.
-- [ ] **Validate action_config shape**
-  - [ ] **Step 10:** For `action_type === "transform"`: ensure `action_config` is object with `mappings` array. Each mapping has `from` and `to` (strings). Throw if invalid.
-  - [ ] **Step 11:** For `action_type === "filter"`: ensure `action_config.conditions` is array. Each condition has `path`, `operator`, optional `value`. Throw if invalid.
-  - [ ] **Step 12:** For `action_type === "template"`: ensure `action_config.template` is string. Throw if invalid.
-  - [ ] **Step 13:** For unknown action_type, throw.
+- [x] **Create `src/services/pipeline.ts`**
+  - [x] **Step 1:** Create folder `src/services/` if it doesn't exist.
+  - [x] **Step 2:** Create file `src/services/pipeline.ts`.
+  - [x] **Step 3:** Import `db`, `assertDbConnection`, `pipelines`, `eq`, and `generateSlug`, `ensureUniqueSlug`, `validateSlug` from lib.
+  - [x] **Step 4:** Implement `createPipeline(name, action_type, action_config)`:
+    - [x] Assert db connection.
+    - [x] Validate `action_config` per action_type (see below).
+    - [x] `baseSlug = generateSlug(name)`.
+    - [x] `slug = await ensureUniqueSlug(baseSlug, db)`.
+    - [x] Insert: `db.insert(pipelines).values({ slug, name, actionType: action_type, actionConfig: action_config }).returning({ id, slug, ... })`.
+    - [x] Return full pipeline row.
+  - [x] **Step 5:** Implement `listPipelines()`: `db.select().from(pipelines)`.
+  - [x] **Step 6:** Implement `getPipelineById(id)`: `db.select().from(pipelines).where(eq(pipelines.id, id)).limit(1)`; return first row or null.
+  - [x] **Step 7:** Implement `getPipelineBySlug(slug)`: same pattern, `eq(pipelines.slug, slug)`.
+  - [x] **Step 8:** Implement `updatePipeline(id, updates)`: `db.update(pipelines).set({ ...updates, updatedAt: new Date() }).where(eq(pipelines.id, id)).returning()`.
+  - [x] **Step 9:** Implement `deletePipeline(id)`: `db.delete(pipelines).where(eq(pipelines.id, id)).returning()`; cascade handles subscribers.
+- [x] **Validate action_config shape**
+  - [x] **Step 10:** For `action_type === "transform"`: ensure `action_config` is object with `mappings` array. Each mapping has `from` and `to` (strings). Throw if invalid.
+  - [x] **Step 11:** For `action_type === "filter"`: ensure `action_config.conditions` is array. Each condition has `path`, `operator`, optional `value`. Throw if invalid.
+  - [x] **Step 12:** For `action_type === "template"`: ensure `action_config.template` is string. Throw if invalid.
+  - [x] **Step 13:** For unknown action_type, throw.
 
 ---
 
 ### 1.8 Pipeline Routes
 
-- [ ] **Create `src/routes/pipelines.ts`**
-  - [ ] **Step 1:** Create file `src/routes/pipelines.ts`.
-  - [ ] **Step 2:** Create router: `const router = Router();`
-  - [ ] **Step 3:** Apply auth middleware: `router.use(authMiddleware);` so all routes below require auth.
-  - [ ] **Step 4:** `POST /api/pipelines`:
-    - [ ] Parse body: `{ name, action_type, action_config }`.
-    - [ ] Validate: `name` (string, non-empty), `action_type` (one of "transform"|"filter"|"template"), `action_config` (object).
-    - [ ] If invalid → `res.status(400).json({ error: "Invalid request" })`.
-    - [ ] Call `createPipeline(name, action_type, action_config)`.
-    - [ ] Return `res.status(201).json(pipeline)`; include `webhookUrl: \`${baseUrl}/webhooks/${pipeline.slug}\`` if you have base URL.
-  - [ ] **Step 5:** `GET /api/pipelines`: call `listPipelines()`, return `res.json(pipelines)`.
-  - [ ] **Step 6:** `GET /api/pipelines/:id`: call `getPipelineById(id)`; if null → 404; else `res.json(pipeline)`.
-  - [ ] **Step 7:** `PUT /api/pipelines/:id`: parse body (partial: name, action_type, action_config); call `updatePipeline(id, updates)`; if no rows updated → 404; else return updated pipeline.
-  - [ ] **Step 8:** `DELETE /api/pipelines/:id`: call `deletePipeline(id)`; if no rows → 404; else 204.
-  - [ ] **Step 9:** Mount in `index.ts`: `app.use("/api/pipelines", pipelinesRouter)`. In the router, define `router.post("/", ...)`, `router.get("/", ...)`, `router.get("/:id", ...)`, `router.put("/:id", ...)`, `router.delete("/:id", ...)` so full paths are `/api/pipelines`, `/api/pipelines/:id`.
-- [ ] **Integration tests for pipeline CRUD**
-  - [ ] **Step 10:** Create `src/routes/pipelines.integration.test.ts` or in `tests/`.
-  - [ ] **Step 11:** Use real Postgres (DATABASE_URL) or skip if not set.
-  - [ ] **Step 12:** Before each test: clean pipelines table or use unique names.
-  - [ ] **Step 13:** Test create: POST with valid body, expect 201, body has `slug`, `id`.
-  - [ ] **Step 14:** Test list: GET, expect array.
-  - [ ] **Step 15:** Test get by id: use id from create, expect 200.
-  - [ ] **Step 16:** Test update: PUT with new name, expect 200 with updated data.
-  - [ ] **Step 17:** Test delete: DELETE, then GET same id, expect 404.
-  - [ ] **Step 18:** Test 401: send request without `Authorization` or `X-API-Key`, expect 401.
+- [x] **Create `src/routes/pipelines.ts`**
+  - [x] **Step 1:** Create file `src/routes/pipelines.ts`.
+  - [x] **Step 2:** Create router: `const router = Router();`
+  - [x] **Step 3:** Apply auth middleware: `router.use(authMiddleware);` so all routes below require auth.
+  - [x] **Step 4:** `POST /api/pipelines`:
+    - [x] Parse body: `{ name, action_type, action_config }`.
+    - [x] Validate: `name` (string, non-empty), `action_type` (one of "transform"|"filter"|"template"), `action_config` (object).
+    - [x] If invalid → `res.status(400).json({ error: "Invalid request" })`.
+    - [x] Call `createPipeline(name, action_type, action_config)`.
+    - [x] Return `res.status(201).json(pipeline)`; include `webhookUrl: \`${baseUrl}/webhooks/${pipeline.slug}\`` if you have base URL.
+  - [x] **Step 5:** `GET /api/pipelines`: call `listPipelines()`, return `res.json(pipelines)`.
+  - [x] **Step 6:** `GET /api/pipelines/:id`: call `getPipelineById(id)`; if null → 404; else `res.json(pipeline)`.
+  - [x] **Step 7:** `PUT /api/pipelines/:id`: parse body (partial: name, action_type, action_config); call `updatePipeline(id, updates)`; if no rows updated → 404; else return updated pipeline.
+  - [x] **Step 8:** `DELETE /api/pipelines/:id`: call `deletePipeline(id)`; if no rows → 404; else 204.
+  - [x] **Step 9:** Mount in `index.ts`: `app.use("/api/pipelines", pipelinesRouter)`. In the router, define `router.post("/", ...)`, `router.get("/", ...)`, `router.get("/:id", ...)`, `router.put("/:id", ...)`, `router.delete("/:id", ...)` so full paths are `/api/pipelines`, `/api/pipelines/:id`.
+- [x] **Integration tests for pipeline CRUD**
+  - [x] **Step 10:** Create `src/routes/pipelines.integration.test.ts` or in `tests/`.
+  - [x] **Step 11:** Use real Postgres (DATABASE_URL) or skip if not set.
+  - [x] **Step 12:** Before each test: clean pipelines table or use unique names.
+  - [x] **Step 13:** Test create: POST with valid body, expect 201, body has `slug`, `id`.
+  - [x] **Step 14:** Test list: GET, expect array.
+  - [x] **Step 15:** Test get by id: use id from create, expect 200.
+  - [x] **Step 16:** Test update: PUT with new name, expect 200 with updated data.
+  - [x] **Step 17:** Test delete: DELETE, then GET same id, expect 404.
+  - [x] **Step 18:** Test 401: send request without `Authorization` or `X-API-Key`, expect 401.
 
 ---
 
