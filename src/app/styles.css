@@ -1,5 +1,5 @@
 /**
- * FlowHook static app — README-style documentation page (dark theme).
+ * FlowHook static app — API docs mirror (dark theme).
  * Loaded by index.html alongside express.static at /app.
  */
 
@@ -36,6 +36,11 @@ body {
 .doc {
   max-width: 980px;
   margin: 0 auto;
+  text-align: center;
+}
+
+.doc-body {
+  text-align: left;
 }
 
 h1 {
@@ -58,6 +63,18 @@ h3 {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 1.25rem 0 0.5rem;
+}
+
+h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
+
+h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.4rem;
 }
 
 p {
@@ -104,7 +121,7 @@ td code {
 }
 
 pre {
-  margin: 0.75rem 0;
+  margin: 0.75rem auto;
   padding: 1rem 1.1rem;
   overflow-x: auto;
   font-size: 0.85rem;
@@ -112,6 +129,7 @@ pre {
   background: var(--code-bg);
   border-radius: 6px;
   border: 1px solid var(--border);
+  text-align: left;
 }
 
 pre code {
@@ -123,8 +141,9 @@ pre code {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 0.75rem 0;
+  margin: 0.75rem auto;
   font-size: 0.95rem;
+  text-align: left;
 }
 
 th,
@@ -153,4 +172,31 @@ hr {
 .last-updated {
   font-size: 0.875rem;
   color: var(--muted);
+}
+
+/* Landing / doc page */
+.tagline {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.health-cta {
+  margin: 1rem 0 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: var(--link);
+  color: var(--bg) !important;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+
+.btn:hover {
+  background: var(--link-hover);
+  color: var(--bg) !important;
+  text-decoration: none !important;
 }
