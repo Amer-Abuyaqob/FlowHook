@@ -6,6 +6,7 @@ import { BadRequestError } from "../errors.js";
 import {
   assertIsObjectOrNull,
   assertIsRecord,
+  assertValidUrl,
   getRequiredString,
 } from "./validation.js";
 
@@ -80,6 +81,41 @@ describe("getRequiredString", () => {
   it("throws when value is null", () => {
     expect(() => getRequiredString({ name: null }, "name", "Required")).toThrow(
       "Required"
+    );
+  });
+});
+
+describe("assertValidUrl", () => {
+  it("returns url for valid https URL", () => {
+    expect(
+      assertValidUrl("https://example.com/webhook", "Invalid URL format")
+    ).toBe("https://example.com/webhook");
+  });
+
+  it("returns url for valid http URL", () => {
+    expect(assertValidUrl("http://localhost:8080/callback")).toBe(
+      "http://localhost:8080/callback"
+    );
+  });
+
+  it("throws with custom message for invalid protocol", () => {
+    expect(() =>
+      assertValidUrl("ftp://example.com/file", "Invalid URL format")
+    ).toThrow(BadRequestError);
+    expect(() =>
+      assertValidUrl("ftp://example.com/file", "Invalid URL format")
+    ).toThrow("Invalid URL format");
+  });
+
+  it("throws for malformed URL", () => {
+    expect(() => assertValidUrl("not-a-url", "Invalid URL format")).toThrow(
+      "Invalid URL format"
+    );
+  });
+
+  it("throws for empty string", () => {
+    expect(() => assertValidUrl("", "Invalid URL format")).toThrow(
+      "Invalid URL format"
     );
   });
 });

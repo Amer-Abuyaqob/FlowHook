@@ -65,3 +65,28 @@ export function getRequiredString(
   }
   return value;
 }
+
+/**
+ * Asserts that the given string is a valid http or https URL.
+ *
+ * @param url - String to validate as URL.
+ * @param message - Error message when invalid (default: "Invalid URL format").
+ * @returns The URL string unchanged.
+ * @throws {BadRequestError} When url is not a valid http(s) URL.
+ */
+export function assertValidUrl(
+  url: string,
+  message: string = "Invalid URL format"
+): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new BadRequestError(message);
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new BadRequestError(message);
+  }
+  return url;
+}
