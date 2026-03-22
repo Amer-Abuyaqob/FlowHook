@@ -3,250 +3,798 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FlowHook</title>
+    <title>FlowHook API</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="doc">
       <article>
         <h1>FlowHook</h1>
-
-        <p>
-          A webhook-driven task processing pipeline built in TypeScript with
-          Express.js. RESTful APIs for pipelines, subscribers, webhook
-          ingestion, and job processing. Give it a star if you find it useful ⭐
+        <p class="tagline">
+          Webhook-driven task processing pipeline. RESTful APIs for pipelines,
+          subscribers, webhook ingestion, and job processing.
         </p>
 
-        <p>
-          See
+        <p class="health-cta">
           <a
-            href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/docs/PROJECT_PLAN.md"
-            >docs/PROJECT_PLAN.md</a
+            href="https://flowhook-622640621692.me-west1.run.app/api/healthz"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn"
+            >Try health check</a
           >
-          for the implementation plan.
-        </p>
-
-        <h2>Motivation</h2>
-        <p>
-          FlowHook is a webhook ingestion and processing pipeline. It receives
-          webhooks, runs configurable actions (transform, filter, template), and
-          delivers results to subscribers.
-        </p>
-
-        <h3>Goal</h3>
-        <ul>
-          <li>RESTful JSON API for pipelines and subscribers</li>
-          <li>Webhook ingestion with slug-based routing</li>
-          <li>Action pipeline (transform, filter, template)</li>
-          <li>PostgreSQL with Drizzle ORM</li>
-          <li>JWT/API key auth for protected routes</li>
-        </ul>
-
-        <h2>⚙️ Installation</h2>
-        <p>
-          Prerequisites: Node.js (see
-          <a href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/.nvmrc"
-            >.nvmrc</a
-          >), PostgreSQL.
-        </p>
-
-        <pre><code>git clone https://github.com/Amer-Abuyaqob/FlowHook.git
-cd FlowHook
-npm install</code></pre>
-
-        <p>
-          <strong>Dependencies:</strong> <code>pg</code>, <code>express</code>,
-          <code>drizzle-orm</code>, <code>dotenv</code>, <code>tsx</code>,
-          <code>vitest</code>, <code>drizzle-kit</code> (see
-          <a href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/.nvmrc"
-            >.nvmrc</a
-          >
-          for Node version).
-        </p>
-
-        <p>
-          Configure environment variables (in <code>.env</code> — do not
-          commit). Copy from <code>.env.example</code> if available:
-        </p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Variable</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>API_KEY</code></td>
-              <td>API key for protected routes (required)</td>
-            </tr>
-            <tr>
-              <td><code>DATABASE_URL</code></td>
-              <td>PostgreSQL connection string (optional)</td>
-            </tr>
-            <tr>
-              <td><code>PORT</code></td>
-              <td>HTTP server port (default 3000)</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2>🚀 Quick Start</h2>
-        <ol>
-          <li>
-            Set <code>API_KEY</code> in <code>.env</code> (required). Set
-            <code>DATABASE_URL</code> for DB features (optional).
-          </li>
-          <li>Run migrations (if using DB) and build:</li>
-        </ol>
-
-        <pre><code>npm run db:migrate   # Only when DATABASE_URL is set
-npm run build
-npm start</code></pre>
-
-        <p>
-          The server exposes a <strong>health check</strong> at
-          <code>GET /api/healthz</code> (plain text <code>OK</code>, UTF-8).
-          <code>GET /</code> redirects to <code>/app/</code>, which serves this
-          page from <code>src/app</code> (copied to <code>dist/client</code> on
-          build). Further REST routes (pipelines, webhooks, auth) follow the
-          roadmap. Tests run with <code>npm test</code> (DB integration tests
-          may run when <code>DATABASE_URL</code> is set).
-        </p>
-
-        <h2>🚀 Quick Start — API Usage</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Method</th>
-              <th>Path</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>GET</code></td>
-              <td><code>/</code></td>
-              <td>Redirects to <code>/app/</code> (302)</td>
-            </tr>
-            <tr>
-              <td><code>GET</code></td>
-              <td><code>/app/</code></td>
-              <td>Static web UI (HTML)</td>
-            </tr>
-            <tr>
-              <td><code>GET</code></td>
-              <td><code>/api/healthz</code></td>
-              <td>Liveness (text OK) — <a href="/api/healthz">try it</a></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>
-          Examples (replace host/port if needed; Cloud Run often uses port
-          <code>8080</code>):
-        </p>
-        <pre><code>curl http://localhost:8080/api/healthz
-curl -sI http://localhost:8080/
-curl http://localhost:8080/app/</code></pre>
-
-        <p>
-          See
-          <a
-            href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/docs/PROJECT_PLAN.md"
-            >docs/PROJECT_PLAN.md</a
-          >
-          for the full roadmap.
-        </p>
-
-        <h2>Tech Stack</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Layer</th>
-              <th>Tech</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Runtime</td>
-              <td>Node.js</td>
-            </tr>
-            <tr>
-              <td>Language</td>
-              <td>TypeScript</td>
-            </tr>
-            <tr>
-              <td>Framework</td>
-              <td>Express.js</td>
-            </tr>
-            <tr>
-              <td>Database</td>
-              <td>PostgreSQL</td>
-            </tr>
-            <tr>
-              <td>ORM</td>
-              <td>Drizzle</td>
-            </tr>
-            <tr>
-              <td>Auth</td>
-              <td>JWT, Argon2</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2>Scripts</h2>
-        <pre><code>npm run build       # Compile TypeScript and copy src/app → dist/client
-npm start           # Run production server
-npm run dev         # Build and run
-npm run test        # Run Vitest
-npm run lint        # Run ESLint
-npm run format:check # Check formatting with Prettier
-npm run test:coverage # Run tests with coverage
-npm run db.generate # Generate migrations
-npm run db.migrate  # Apply migrations</code></pre>
-
-        <h2>Documentation</h2>
-        <ul>
-          <li>
-            <a
-              href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/docs/PROJECT_DESC.md"
-              >Project overview</a
-            >
-            — Architecture, workspace map
-          </li>
-          <li>
-            <a
-              href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/docs/API.md"
-              >API reference</a
-            >
-            — Full endpoint docs with schemas
-          </li>
-        </ul>
-
-        <h2>👏 Contributing</h2>
-        <p>
-          Contributions are welcome! Fork the repo, open a pull request, and
-          ensure tests pass (<code>npm run test</code>). Submit PRs to the
-          <code>main</code> branch.
         </p>
 
         <hr />
 
-        <p class="last-updated">
-          <strong>Last Updated:</strong> Static web UI at
-          <code>GET /app/</code> (files in <code>src/app</code>, built to
-          <code>dist/client</code>), <code>GET /</code> →
-          <code>/app/</code> redirect, exported <code>APP_ROUTE</code>, and
-          Supertest coverage for redirect + HTML. Health check remains at
-          <code>GET /api/healthz</code>. See
-          <a
-            href="https://github.com/Amer-Abuyaqob/FlowHook/blob/main/personal/PR.md"
-            >personal/PR.md</a
-          >
-          for the latest PR notes.
-        </p>
+        <section class="doc-body">
+          <h2>FlowHook API Documentation</h2>
+          <p>
+            RESTful JSON API for the FlowHook webhook pipeline service. All API
+            endpoints use <code>application/json</code> for request and response
+            bodies unless noted.
+          </p>
+
+          <h3>Table of Contents</h3>
+          <ul>
+            <li><a href="#base-url">Base URL</a></li>
+            <li><a href="#authentication">Authentication</a></li>
+            <li><a href="#error-format">Error Format</a></li>
+            <li>
+              <a href="#endpoints">Endpoints</a>
+              <ul>
+                <li><a href="#health">Health</a></li>
+                <li><a href="#pipelines">Pipelines</a></li>
+                <li><a href="#subscribers">Subscribers</a></li>
+                <li><a href="#jobs">Jobs</a></li>
+                <li><a href="#webhooks">Webhooks</a></li>
+              </ul>
+            </li>
+            <li><a href="#action-config-shapes">Action Config Shapes</a></li>
+            <li><a href="#static-assets">Static Assets</a></li>
+          </ul>
+
+          <hr />
+
+          <h3 id="base-url">Base URL</h3>
+          <pre><code>http://localhost:{PORT}</code></pre>
+          <p>
+            Replace <code>{PORT}</code> with your configured port (default:
+            <code>3000</code>).
+          </p>
+
+          <hr />
+
+          <h3 id="authentication">Authentication</h3>
+          <p>FlowHook uses API key authentication for protected endpoints:</p>
+
+          <h4>API Key (Bearer or Header)</h4>
+          <p>
+            Used for pipeline CRUD, job queries, and subscriber management. Set
+            via
+            <code>API_KEY</code> environment variable.
+          </p>
+          <pre><code>Authorization: Bearer &lt;API_KEY&gt;</code></pre>
+          <p>Alternatively:</p>
+          <pre><code>X-API-Key: &lt;API_KEY&gt;</code></pre>
+
+          <h4>Unprotected Routes</h4>
+          <p>No authentication required for:</p>
+          <ul>
+            <li><code>GET /api/healthz</code> — Health check</li>
+            <li>
+              <code>POST /webhooks/:slug</code> — Webhook ingestion (slug
+              identifies the pipeline)
+            </li>
+          </ul>
+
+          <hr />
+
+          <h3 id="error-format">Error Format</h3>
+          <p>All error responses (4xx, 5xx) return JSON:</p>
+          <pre><code>{
+  "error": "Human-readable error message"
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>400</td>
+                <td>Bad Request – Invalid or missing input</td>
+              </tr>
+              <tr>
+                <td>401</td>
+                <td>Unauthorized – Missing or invalid credentials</td>
+              </tr>
+              <tr>
+                <td>403</td>
+                <td>Forbidden – Valid credentials but not allowed</td>
+              </tr>
+              <tr>
+                <td>404</td>
+                <td>Not Found – Resource does not exist</td>
+              </tr>
+              <tr>
+                <td>409</td>
+                <td>Conflict – State conflict (e.g. duplicate slug)</td>
+              </tr>
+              <tr>
+                <td>500</td>
+                <td>Internal Server Error – Unexpected server error</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h3 id="endpoints">Endpoints</h3>
+
+          <h4 id="health">Health</h4>
+          <h5><code>GET /api/healthz</code></h5>
+          <p>Readiness/health check. Returns <code>OK</code> as plain text.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>None</td>
+                <td>200 – <code>OK</code> (plain text)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h4 id="pipelines">Pipelines</h4>
+          <p>All pipeline endpoints require API key authentication.</p>
+
+          <h5><code>POST /api/pipelines</code></h5>
+          <p>
+            Create a new pipeline. Returns the full pipeline including
+            <code>slug</code> and <code>webhookUrl</code>.
+          </p>
+          <p><strong>Request body:</strong></p>
+          <pre><code>{
+  "name": "My Stripe Orders",
+  "action_type": "transform",
+  "action_config": {
+    "mappings": [
+      { "from": "firstName", "to": "first_name" },
+      { "from": "lastName", "to": "last_name", "optional": true }
+    ]
+  }
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Non-empty; used to generate slug (lowercase, hyphens)</td>
+              </tr>
+              <tr>
+                <td>action_type</td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>
+                  One of <code>transform</code>, <code>filter</code>,
+                  <code>template</code>
+                </td>
+              </tr>
+              <tr>
+                <td>action_config</td>
+                <td>object</td>
+                <td>Yes</td>
+                <td>
+                  Shape depends on action_type (see Action Config Shapes below)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Response (201):</strong></p>
+          <pre><code>{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "slug": "my-stripe-orders",
+  "name": "My Stripe Orders",
+  "action_type": "transform",
+  "action_config": { "mappings": [...] },
+  "is_active": true,
+  "created_at": "2025-03-14T12:00:00.000Z",
+  "updated_at": "2025-03-14T12:00:00.000Z",
+  "webhookUrl": "http://localhost:3000/webhooks/my-stripe-orders"
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Error message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>201</td>
+                <td>Created</td>
+              </tr>
+              <tr>
+                <td>400</td>
+                <td>
+                  <code>Invalid request</code>, <code>name is required</code>,
+                  etc.
+                </td>
+              </tr>
+              <tr>
+                <td>401</td>
+                <td><code>Authorization header is required</code>, etc.</td>
+              </tr>
+              <tr>
+                <td>409</td>
+                <td>
+                  <code>Slug already in use</code> (if collision after append)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h5><code>GET /api/pipelines</code></h5>
+          <p>List all pipelines.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API key</td>
+                <td>200 – JSON array of pipeline objects</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h5><code>GET /api/pipelines/:id</code></h5>
+          <p>Get a single pipeline by ID.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API key</td>
+                <td>200 – Pipeline object</td>
+              </tr>
+              <tr>
+                <td>API key</td>
+                <td>404 – <code>Pipeline not found</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h5><code>PUT /api/pipelines/:id</code></h5>
+          <p>Update a pipeline. All fields are optional (partial update).</p>
+          <p><strong>Request body:</strong></p>
+          <pre><code>{
+  "name": "Updated Name",
+  "action_type": "filter",
+  "action_config": { "conditions": [...] },
+  "is_active": false
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Error message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>200</td>
+                <td>Success (returns updated pipeline)</td>
+              </tr>
+              <tr>
+                <td>400</td>
+                <td><code>Invalid request</code></td>
+              </tr>
+              <tr>
+                <td>401</td>
+                <td><code>Authorization header is required</code>, etc.</td>
+              </tr>
+              <tr>
+                <td>404</td>
+                <td><code>Pipeline not found</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h5><code>DELETE /api/pipelines/:id</code></h5>
+          <p>Delete a pipeline. Cascades to subscribers and related jobs.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API key</td>
+                <td>204 – No Content</td>
+              </tr>
+              <tr>
+                <td>API key</td>
+                <td>404 – <code>Pipeline not found</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h4 id="subscribers">Subscribers</h4>
+          <p>Manage destination URLs for a pipeline. All require API key.</p>
+
+          <h5><code>POST /api/pipelines/:id/subscribers</code></h5>
+          <p>Add a subscriber (destination URL) to a pipeline.</p>
+          <p><strong>Request body:</strong></p>
+          <pre><code>{
+  "url": "https://example.com/webhook",
+  "headers": {
+    "Authorization": "Bearer your-secret",
+    "X-Custom-Header": "value"
+  }
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>url</td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Valid http(s) URL</td>
+              </tr>
+              <tr>
+                <td>headers</td>
+                <td>object</td>
+                <td>No</td>
+                <td>Optional key-value headers to send</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Response (201):</strong></p>
+          <pre><code>{
+  "id": "660e8400-e29b-41d4-a716-446655440001",
+  "pipeline_id": "550e8400-e29b-41d4-a716-446655440000",
+  "url": "https://example.com/webhook",
+  "headers": { "Authorization": "Bearer your-secret" },
+  "created_at": "2025-03-14T12:00:00.000Z"
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Error message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>201</td>
+                <td>Created</td>
+              </tr>
+              <tr>
+                <td>400</td>
+                <td>
+                  <code>URL is required</code>, <code>Invalid URL format</code>
+                </td>
+              </tr>
+              <tr>
+                <td>401</td>
+                <td><code>Authorization header is required</code>, etc.</td>
+              </tr>
+              <tr>
+                <td>404</td>
+                <td><code>Pipeline not found</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h5>
+            <code>DELETE /api/pipelines/:id/subscribers/:subscriberId</code>
+          </h5>
+          <p>Remove a subscriber from a pipeline.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API key</td>
+                <td>204 – No Content</td>
+              </tr>
+              <tr>
+                <td>API key</td>
+                <td>
+                  404 – <code>Pipeline not found</code> or
+                  <code>Subscriber not found</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h4 id="jobs">Jobs</h4>
+          <p>Query job status and results. All require API key.</p>
+
+          <h5><code>GET /api/jobs</code></h5>
+          <p>List jobs with optional filters.</p>
+          <p><strong>Query parameters:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>pipelineId</td>
+                <td>string</td>
+                <td>No</td>
+                <td>—</td>
+                <td>Filter by pipeline UUID</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>string</td>
+                <td>No</td>
+                <td>—</td>
+                <td>
+                  <code>pending</code>, <code>processing</code>,
+                  <code>completed</code>, <code>filtered</code>,
+                  <code>failed</code>
+                </td>
+              </tr>
+              <tr>
+                <td>limit</td>
+                <td>number</td>
+                <td>No</td>
+                <td>50</td>
+                <td>Max results</td>
+              </tr>
+              <tr>
+                <td>offset</td>
+                <td>number</td>
+                <td>No</td>
+                <td>0</td>
+                <td>Pagination offset</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Example:</strong>
+            <code
+              >GET
+              /api/jobs?pipelineId=550e8400-e29b-41d4-a716-446655440000&status=completed&limit=10</code
+            >
+          </p>
+          <p><strong>Response (200):</strong></p>
+          <pre><code>[
+  {
+    "id": "770e8400-e29b-41d4-a716-446655440002",
+    "pipeline_id": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "completed",
+    "payload": { "event": "order.created", "amount": 99 },
+    "result": { "first_name": "Jane", "amount": 99 },
+    "created_at": "2025-03-14T12:00:00.000Z",
+    "updated_at": "2025-03-14T12:00:05.000Z",
+    "processing_started_at": "2025-03-14T12:00:01.000Z",
+    "processing_ended_at": "2025-03-14T12:00:05.000Z"
+  }
+]</code></pre>
+
+          <h5><code>GET /api/jobs/:id</code></h5>
+          <p>Get a single job by ID, including delivery attempts.</p>
+          <p>
+            <strong>Response (200):</strong> Same shape as job object in list,
+            plus <code>delivery_attempts</code> array:
+          </p>
+          <pre><code>{
+  "id": "770e8400-e29b-41d4-a716-446655440002",
+  "pipeline_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "completed",
+  "payload": { ... },
+  "result": { ... },
+  "created_at": "...",
+  "updated_at": "...",
+  "processing_started_at": "...",
+  "processing_ended_at": "...",
+  "delivery_attempts": [
+    {
+      "id": "...",
+      "subscriber_id": "...",
+      "attempt_number": 1,
+      "status_code": 200,
+      "success": true,
+      "error_message": null,
+      "created_at": "..."
+    }
+  ]
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Error message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>200</td>
+                <td>Success</td>
+              </tr>
+              <tr>
+                <td>404</td>
+                <td><code>Job not found</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h4 id="webhooks">Webhooks</h4>
+          <h5><code>POST /webhooks/:slug</code></h5>
+          <p>
+            Ingest a webhook payload. <strong>No authentication</strong> — the
+            slug identifies the pipeline. Returns 202 immediately after
+            enqueueing; processing runs asynchronously in the worker.
+          </p>
+          <p><strong>Path parameters:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>slug</td>
+                <td>string</td>
+                <td>Yes</td>
+                <td>Pipeline slug (e.g. <code>my-stripe-orders</code>)</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <strong>Request body:</strong> Valid JSON (arbitrary shape).
+            Processed according to pipeline action config.
+          </p>
+          <p><strong>Response (202):</strong></p>
+          <pre><code>{
+  "jobId": "770e8400-e29b-41d4-a716-446655440002"
+}</code></pre>
+          <p>
+            Optional <code>Job-Id</code> header: same UUID for programmatic
+            retrieval.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Error message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>202</td>
+                <td>Accepted (job enqueued)</td>
+              </tr>
+              <tr>
+                <td>400</td>
+                <td>
+                  <code>Invalid JSON</code>, <code>Pipeline is inactive</code>
+                </td>
+              </tr>
+              <tr>
+                <td>404</td>
+                <td><code>Pipeline not found</code></td>
+              </tr>
+              <tr>
+                <td>500</td>
+                <td><code>Internal Server Error</code> (DB/insert failure)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h3 id="action-config-shapes">Action Config Shapes</h3>
+
+          <h4>transform</h4>
+          <p>Renames or reshapes JSON fields.</p>
+          <pre><code>{
+  "mappings": [
+    { "from": "firstName", "to": "first_name" },
+    { "from": "lastName", "to": "last_name", "optional": true }
+  ]
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>mappings</td>
+                <td>array</td>
+                <td>Required</td>
+              </tr>
+              <tr>
+                <td>from</td>
+                <td>string</td>
+                <td>Source key or path</td>
+              </tr>
+              <tr>
+                <td>to</td>
+                <td>string</td>
+                <td>Target key in output</td>
+              </tr>
+              <tr>
+                <td>optional</td>
+                <td>bool</td>
+                <td>If true, missing source does not fail</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>filter</h4>
+          <p>
+            Keeps or drops events based on conditions. All conditions are ANDed.
+          </p>
+          <pre><code>{
+  "conditions": [
+    { "path": "event.type", "operator": "eq", "value": "order.created" },
+    { "path": "amount", "operator": "exists" }
+  ]
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>conditions</td>
+                <td>array</td>
+                <td>Required</td>
+              </tr>
+              <tr>
+                <td>path</td>
+                <td>string</td>
+                <td>Dot-notation path (e.g. <code>event.type</code>)</td>
+              </tr>
+              <tr>
+                <td>operator</td>
+                <td>string</td>
+                <td>
+                  <code>eq</code>, <code>neq</code>, <code>exists</code>,
+                  <code>contains</code>
+                </td>
+              </tr>
+              <tr>
+                <td>value</td>
+                <td>any</td>
+                <td>Used for eq, neq, contains; not for exists</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Dropped events → job status <code>filtered</code>,
+            <code>result</code> is null.
+          </p>
+
+          <h4>template</h4>
+          <p>
+            Renders a string from payload placeholders (Mustache-style
+            <code>{{path}}</code>).
+          </p>
+          <pre><code>{
+  "template": "New order from {{customer.name}}: {{amount}}"
+}</code></pre>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>template</td>
+                <td>string</td>
+                <td>Required; <code>{{x.y.z}}</code> replaced from payload</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Output is a string; subscribers receive
+            <code>{"body": "..."}</code> or similar wrapped result depending on
+            implementation.
+          </p>
+
+          <hr />
+
+          <h3 id="static-assets">Static Assets</h3>
+          <h5>
+            <code>GET /</code> and <code>GET /app</code> and
+            <code>GET /app/*</code>
+          </h5>
+          <ul>
+            <li><code>/</code> redirects to <code>/app/</code>.</li>
+            <li>
+              <code>/app</code> and <code>/app/*</code> serve static files from
+              the web UI.
+            </li>
+          </ul>
+          <table>
+            <thead>
+              <tr>
+                <th>Auth</th>
+                <th>Response</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>None</td>
+                <td>200 – Static file (HTML, etc.) or 302 redirect</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+          <p class="muted last-updated"><em>Last updated: March 2025</em></p>
+        </section>
       </article>
     </main>
   </body>
