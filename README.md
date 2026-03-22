@@ -47,14 +47,14 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves a **README-aligned** static page (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). **API key auth** (Bearer or X-API-Key) and **central error middleware** are implemented; auth will be applied to pipeline/job routes when those are added. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) and **central error middleware** are implemented; auth will be applied to pipeline/job routes when those are added. Tests run with `npm test` (DB integration tests may run when `DATABASE_URL` is set).
 
 ## 🚀 Quick Start — API Usage
 
 | Method | Path           | Description                |
 | ------ | -------------- | -------------------------- |
 | `GET`  | `/`            | Redirects to `/app/` (302) |
-| `GET`  | `/app/`        | Static web UI (HTML)       |
+| `GET`  | `/app/`        | API documentation (HTML)   |
 | `GET`  | `/api/healthz` | Liveness (text OK)         |
 
 Examples:
@@ -103,4 +103,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1.6 slug library done. `generateSlug`, `validateSlug`, `ensureUniqueSlug` in `src/lib/slug.ts`; pipeline queries in `src/db/queries/pipelines.ts` (`getPipelineBySlug`, `existsPipelineWithSlug`). Ready for Pipeline Service (1.7). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Initial API documentation. `docs/API.md` documents all endpoints (health, pipelines, subscribers, jobs, webhooks). Web UI at `/app/` mirrors the API docs with status badges (Available/Planned). Ready for Pipeline Service (1.7). See [personal/PR.md](personal/PR.md) for PR notes.
