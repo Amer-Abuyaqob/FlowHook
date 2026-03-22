@@ -71,12 +71,15 @@ describe("getOptionalEnv", () => {
 });
 
 describe("config", () => {
-  it("exports config with port, db.url, and apiKey", () => {
+  it("exports config with port, db.url, apiKey, and baseUrl", () => {
     expect(config).toHaveProperty("port");
     expect(config).toHaveProperty("db");
     expect(config).toHaveProperty("apiKey");
+    expect(config).toHaveProperty("baseUrl");
     expect(typeof config.port).toBe("number");
     expect(config.db).toHaveProperty("url");
     expect(typeof config.apiKey).toBe("string");
+    expect(typeof config.baseUrl).toBe("string");
+    expect(config.baseUrl.length).toBeGreaterThan(0);
   });
 });

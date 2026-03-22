@@ -1,6 +1,6 @@
 /**
  * Application configuration loaded from environment variables.
- * Single source of truth for PORT, DATABASE_URL, and API_KEY.
+ * Single source of truth for PORT, DATABASE_URL, API_KEY, and BASE_URL.
  */
 import "dotenv/config";
 
@@ -19,11 +19,13 @@ export type DbConfig = {
  * @property port - HTTP server port (default 3000).
  * @property db - Database config; url is undefined when DATABASE_URL is not set.
  * @property apiKey - API key for authenticated endpoints (required).
+ * @property baseUrl - Base URL for webhook endpoints; defaults to http://localhost:PORT when not set.
  */
 export type Config = {
   port: number;
   db: DbConfig;
   apiKey: string;
+  baseUrl: string;
 };
 
 /**
@@ -76,10 +78,13 @@ export function getOptionalEnv(value: string | undefined): string | undefined {
  * @throws {Error} When API_KEY is missing.
  */
 function loadConfig(): Config {
+  const port = parsePort(process.env.PORT);
+  const baseUrlEnv = getOptionalEnv(process.env.BASE_URL);
   return {
-    port: parsePort(process.env.PORT),
+    port,
     db: { url: getOptionalEnv(process.env.DATABASE_URL) },
     apiKey: requireEnv(process.env.API_KEY, "API_KEY"),
+    baseUrl: baseUrlEnv ?? `http://localhost:${port}`,
   };
 }
 
