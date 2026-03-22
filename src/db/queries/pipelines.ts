@@ -21,6 +21,7 @@ export type PipelineUpdate = {
   name?: string;
   actionType?: ActionType;
   actionConfig?: ActionConfig | null;
+  isActive?: boolean;
 };
 
 /**
