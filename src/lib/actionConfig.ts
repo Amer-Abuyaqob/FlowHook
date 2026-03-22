@@ -6,6 +6,7 @@
  */
 import type { ActionType } from "../db/types.js";
 import { BadRequestError } from "../errors.js";
+import { assertIsRecord } from "./validation.js";
 
 const VALID_ACTION_TYPES: readonly ActionType[] = [
   "transform",
@@ -31,7 +32,7 @@ export function validateActionConfig(
   config: unknown
 ): void {
   assertValidActionType(actionType);
-  const obj = assertIsRecord(config);
+  const obj = assertIsRecord(config, "action_config must be an object");
 
   switch (actionType) {
     case "transform":
@@ -59,17 +60,22 @@ function assertValidActionType(actionType: string): void {
 }
 
 /**
- * Throws if config is not a plain object (excludes null, arrays, primitives).
+ * Parses and validates action_type from a raw request value.
  *
- * @param config - Value to check.
- * @returns Config cast as Record.
- * @throws {BadRequestError} When not a plain object.
+ * @param value - Raw value from request body.
+ * @returns Valid ActionType.
+ * @throws {BadRequestError} When value is not a string or not a valid action type.
  */
-function assertIsRecord(config: unknown): Record<string, unknown> {
-  if (config === null || typeof config !== "object" || Array.isArray(config)) {
-    throw new BadRequestError("action_config must be an object");
+export function parseActionType(value: unknown): ActionType {
+  if (typeof value !== "string") {
+    throw new BadRequestError("action_type must be a string");
   }
-  return config as Record<string, unknown>;
+  if (!VALID_ACTION_TYPES.includes(value as ActionType)) {
+    throw new BadRequestError(
+      "action_type must be one of: transform, filter, template"
+    );
+  }
+  return value as ActionType;
 }
 
 /**

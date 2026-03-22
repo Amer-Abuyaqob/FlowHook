@@ -1,9 +1,37 @@
 /**
- * Unit tests for actionConfig module: validateActionConfig.
+ * Unit tests for actionConfig module: validateActionConfig, parseActionType.
  */
 import { describe, expect, it } from "vitest";
 import { BadRequestError } from "../errors.js";
-import { validateActionConfig } from "./actionConfig.js";
+import { parseActionType, validateActionConfig } from "./actionConfig.js";
+
+describe("parseActionType", () => {
+  it("returns transform for 'transform'", () => {
+    expect(parseActionType("transform")).toBe("transform");
+  });
+
+  it("returns filter for 'filter'", () => {
+    expect(parseActionType("filter")).toBe("filter");
+  });
+
+  it("returns template for 'template'", () => {
+    expect(parseActionType("template")).toBe("template");
+  });
+
+  it("throws when value is not a string", () => {
+    expect(() => parseActionType(123)).toThrow(BadRequestError);
+    expect(() => parseActionType(123)).toThrow("action_type must be a string");
+    expect(() => parseActionType(null)).toThrow("action_type must be a string");
+    expect(() => parseActionType({})).toThrow("action_type must be a string");
+  });
+
+  it("throws when value is invalid action type string", () => {
+    expect(() => parseActionType("invalid")).toThrow(BadRequestError);
+    expect(() => parseActionType("invalid")).toThrow(
+      "action_type must be one of: transform, filter, template"
+    );
+  });
+});
 
 describe("validateActionConfig", () => {
   describe("invalid action_type", () => {
