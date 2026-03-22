@@ -83,7 +83,7 @@ export function createApp(): express.Express {
  */
 function registerApiRoutes(app: express.Express): void {
   app.use(API_PREFIX, healthRouter);
-  app.use(`${API_PREFIX}/pipelines`, pipelinesRouter);
+  app.use(API_PREFIX, pipelinesRouter);
 }
 
 /**

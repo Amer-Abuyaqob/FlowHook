@@ -1,8 +1,8 @@
 /**
  * Pipeline CRUD routes: create, list, get by id, update, delete.
  *
- * All routes require API key authentication. Uses pipeline service, validation,
- * and serialization helpers to produce snake_case API responses per API.md.
+ * Mount this router under a prefix (e.g. /api) so callers use POST /api/pipelines, etc.
+ * All routes require API key authentication.
  */
 import type { Request, Response, NextFunction } from "express";
 import { Router } from "express";
@@ -21,8 +21,8 @@ import {
 } from "../services/pipeline.js";
 import { authMiddleware } from "../auth/authMiddleware.js";
 
-const router = Router();
-router.use(authMiddleware);
+const pipelinesApi = Router();
+pipelinesApi.use(authMiddleware);
 
 /**
  * POST / — Create a pipeline.
@@ -122,10 +122,13 @@ async function deletePipelineHandler(
   }
 }
 
-router.post("/", createPipelineHandler);
-router.get("/", listPipelinesHandler);
-router.get("/:id", getPipelineByIdHandler);
-router.put("/:id", updatePipelineHandler);
-router.delete("/:id", deletePipelineHandler);
+pipelinesApi.post("/", createPipelineHandler);
+pipelinesApi.get("/", listPipelinesHandler);
+pipelinesApi.get("/:id", getPipelineByIdHandler);
+pipelinesApi.put("/:id", updatePipelineHandler);
+pipelinesApi.delete("/:id", deletePipelineHandler);
 
-export default router;
+const pipelinesRouter = Router();
+pipelinesRouter.use("/pipelines", pipelinesApi);
+
+export default pipelinesRouter;
