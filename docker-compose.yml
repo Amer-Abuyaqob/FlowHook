@@ -17,21 +17,34 @@ services:
 
   api:
     build: .
+    command: node dist/index.js
     ports:
       - "${PORT:-8080}:8080"
     environment:
       PORT: 8080
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/flowhook?sslmode=disable
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       API_KEY: ${API_KEY:-dev-api-key}
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "import('node:http').then(({ request }) => { const req = request('http://localhost:8080/api/healthz', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end(); }).catch(() => process.exit(1));",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   worker:
+    # Local development worker service. Production worker deployment is phase-next.
     build: .
     command: node dist/worker.js
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/flowhook?sslmode=disable
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       API_KEY: ${API_KEY:-dev-api-key}
     depends_on:
       postgres:
