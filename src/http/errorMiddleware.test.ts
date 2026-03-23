@@ -60,7 +60,9 @@ describe("errorMiddleware", () => {
     errorMiddleware(new SyntaxError("Unexpected token"), req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(send).toHaveBeenCalledWith(JSON.stringify({ error: "Invalid JSON" }));
+    expect(send).toHaveBeenCalledWith(
+      JSON.stringify({ error: "Invalid JSON" })
+    );
   });
 
   it("maps UserForbiddenError to 403", () => {
