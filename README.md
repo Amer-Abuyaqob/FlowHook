@@ -111,4 +111,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Pipeline and subscriber APIs implemented (sections 1.7–1.10). Endpoints: POST/GET/PUT/DELETE `/api/pipelines`; POST/DELETE `/api/pipelines/:id/subscribers` with auth, validation, and serialization. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Job enqueue-only service implemented (section `1.11`). Added `enqueueJob` (pending job insertion) with DB helper `insertJob`, plus unit tests. See [personal/PR.md](personal/PR.md) for PR notes.
