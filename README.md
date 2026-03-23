@@ -35,7 +35,7 @@ Configure environment variables (in `.env` — do not commit). Copy from `.env.e
 | `API_KEY`      | API key for protected routes (required)                      |
 | `DATABASE_URL` | PostgreSQL connection string (required for CRUD)             |
 | `BASE_URL`     | Base URL for webhook URLs (default: `http://localhost:PORT`) |
-| `PORT`         | HTTP server port (default 3000)                              |
+| `PORT`         | HTTP server port (default 8080)                              |
 
 ## 🚀 Quick Start
 
@@ -69,9 +69,9 @@ The server exposes a **health check** at **`GET /api/healthz`** (plain text **`O
 Examples:
 
 ```bash
-curl http://localhost:3000/api/healthz
-curl -H "Authorization: Bearer $API_KEY" http://localhost:3000/api/pipelines
-curl http://localhost:3000/app/
+curl http://localhost:8080/api/healthz
+curl -H "Authorization: Bearer $API_KEY" http://localhost:8080/api/pipelines
+curl http://localhost:8080/app/
 ```
 
 See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
@@ -112,4 +112,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Webhook ingestion endpoint implemented (section `1.12`). Added `POST /webhooks/:slug` to validate pipelines and enqueue `pending` jobs, plus integration tests and standardized malformed JSON handling (`400 Invalid JSON`). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Deployment and local runtime alignment updates completed. Defaults now use port `8080`, Docker Compose enforces explicit `DATABASE_URL` with API health checks, and CD deploys immutable Cloud Run image tags (`github.sha`) for traceability. Planning docs (`docs/TODO.md`, `docs/PROJECT_PLAN.md`, `docs/DESIGN_DECISIONS.md`) were updated to reflect webhook completion and the current worker rollout phase. See [personal/PR.md](personal/PR.md) for PR notes.

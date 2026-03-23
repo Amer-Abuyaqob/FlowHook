@@ -2,7 +2,7 @@
 
 Deeply detailed step-by-step checklist. Work top-to-bottom within each phase. Check off items as you complete them.
 
-**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, pipeline APIs, and subscriber routes are done. Webhooks and worker processing are pending.
+**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, pipeline APIs, subscriber routes, and webhook ingestion are done. Worker processing and subscriber delivery are pending.
 
 ---
 
@@ -391,15 +391,15 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.13 Docker
 
-- [ ] **Verify/align Dockerfile**
-  - [ ] **Step 1:** Ensure multi-stage build: stage 1 builds TS, stage 2 copies dist.
-  - [ ] **Step 2:** Builder: `FROM node:24-alpine` (or 22 if preferred), `WORKDIR /app`, `COPY package*.json`, `RUN npm ci`, `COPY .`, `RUN npm run build`.
-  - [ ] **Step 3:** Runtime: `FROM node:24-alpine`, `COPY package*.json`, `RUN npm ci --omit=dev`, `COPY --from=builder /app/dist ./dist`, `CMD ["node", "dist/index.js"]`.
-  - [ ] **Step 4:** Add `EXPOSE 8080` if using 8080 (Cloud Run).
-- [ ] **Verify docker-compose.yml**
-  - [ ] **Step 5:** `postgres`: image `postgres:16`, env `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, ports `5432`, volume for persistence, healthcheck.
-  - [ ] **Step 6:** `api`: `build: .`, `command: node dist/index.js`, `depends_on: postgres`, env `DATABASE_URL`, `API_KEY`, `PORT`.
-  - [ ] **Step 7:** `worker`: same image, `command: node dist/worker.js`, `depends_on: postgres`.
+- [x] **Verify/align Dockerfile**
+  - [x] **Step 1:** Ensure multi-stage build: stage 1 builds TS, stage 2 copies dist.
+  - [x] **Step 2:** Builder: `FROM node:22-alpine`, `WORKDIR /app`, `COPY package*.json`, `RUN npm install`, `COPY src` + `tsconfig`, `RUN npm run build`.
+  - [x] **Step 3:** Runtime: `FROM node:22-alpine`, `COPY package*.json`, `RUN npm install --omit=dev`, `COPY --from=builder /app/dist ./dist`, `CMD ["node", "dist/index.js"]`.
+  - [x] **Step 4:** `EXPOSE 8080` for container runtime.
+- [x] **Verify docker-compose.yml**
+  - [x] **Step 5:** `postgres`: image `postgres:16-alpine`, env `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, ports `5432`, volume for persistence, healthcheck.
+  - [x] **Step 6:** `api`: `build: .`, `command: node dist/index.js`, `depends_on: postgres`, env `DATABASE_URL`, `API_KEY`, `PORT=8080`.
+  - [x] **Step 7:** `worker`: same image, `command: node dist/worker.js`, `depends_on: postgres` (local dev service; production rollout in phase-next).
   - [ ] **Step 8:** Run `docker compose build` then `docker compose up` — api and postgres should start.
 
 ---
