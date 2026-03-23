@@ -391,16 +391,16 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.13 Docker
 
-- [ ] **Verify/align Dockerfile**
-  - [ ] **Step 1:** Ensure multi-stage build: stage 1 builds TS, stage 2 copies dist.
-  - [ ] **Step 2:** Builder: `FROM node:24-alpine` (or 22 if preferred), `WORKDIR /app`, `COPY package*.json`, `RUN npm ci`, `COPY .`, `RUN npm run build`.
-  - [ ] **Step 3:** Runtime: `FROM node:24-alpine`, `COPY package*.json`, `RUN npm ci --omit=dev`, `COPY --from=builder /app/dist ./dist`, `CMD ["node", "dist/index.js"]`.
-  - [ ] **Step 4:** Add `EXPOSE 8080` if using 8080 (Cloud Run).
-- [ ] **Verify docker-compose.yml**
-  - [ ] **Step 5:** `postgres`: image `postgres:16`, env `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, ports `5432`, volume for persistence, healthcheck.
-  - [ ] **Step 6:** `api`: `build: .`, `command: node dist/index.js`, `depends_on: postgres`, env `DATABASE_URL`, `API_KEY`, `PORT`.
-  - [ ] **Step 7:** `worker`: same image, `command: node dist/worker.js`, `depends_on: postgres`.
-  - [ ] **Step 8:** Run `docker compose build` then `docker compose up` — api and postgres should start.
+- [x] **Verify/align Dockerfile**
+  - [x] **Step 1:** Ensure multi-stage build: stage 1 builds TS, stage 2 copies dist.
+  - [x] **Step 2:** Builder: `FROM node:24-alpine` (or 22 if preferred), `WORKDIR /app`, `COPY package*.json`, `RUN npm ci`, `COPY .`, `RUN npm run build`.
+  - [x] **Step 3:** Runtime: `FROM node:24-alpine`, `COPY package*.json`, `RUN npm ci --omit=dev`, `COPY --from=builder /app/dist ./dist`, `CMD ["node", "dist/index.js"]`.
+  - [x] **Step 4:** Add `EXPOSE 8080` if using 8080 (Cloud Run).
+- [x] **Verify docker-compose.yml**
+  - [x] **Step 5:** `postgres`: image `postgres:16`, env `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, ports `5432`, volume for persistence, healthcheck.
+  - [x] **Step 6:** `api`: `build: .`, `command: node dist/index.js`, `depends_on: postgres`, env `DATABASE_URL`, `API_KEY`, `PORT`.
+  - [x] **Step 7:** `worker`: same image, `command: node dist/worker.js`, `depends_on: postgres`.
+  - [x] **Step 8:** Run `docker compose build` then `docker compose up` — api and postgres should start.
 
 ---
 
@@ -412,7 +412,6 @@ These are installed via `npm install` when you create the project — no global 
   - [x] `npm ci`, `npm test`, `npm run test:coverage`
   - [x] Style job: format:check, lint
 - [x] **CD workflow** (`.github/workflows/cd.yml`) — deploy to GCP Cloud Run on push to main
-  - [ ] **Note:** CI runs unit tests only; no Postgres service for integration tests. Add `DATABASE_URL`/Postgres service if integration tests require it.
 
 ---
 
@@ -439,18 +438,18 @@ These are installed via `npm install` when you create the project — no global 
   - [x] **Health endpoint**: `GET /api/healthz` → 200, body "OK".
   - [x] **Pipeline CRUD**: See 1.8 Step 10–18.
   - [x] **Subscriber CRUD**: See 1.10 Step 5–9.
-  - [ ] **Webhook ingestion**: See 1.12 Step 6–11.
-  - [ ] **401 on protected routes**: Request without API key → 401.
+  - [x] **Webhook ingestion**: See 1.12 Step 6–11.
+  - [x] **401 on protected routes**: Request without API key → 401.
 
 ---
 
 ### Phase 1 Complete When
 
-- [ ] **Step 1:** Run `docker compose up` — api and postgres start without error.
+- [x] **Step 1:** Run `docker compose up` — api and postgres start without error.
 - [x] **Step 2:** Create pipeline via `POST /api/pipelines` (with API key).
 - [x] **Step 3:** Add subscriber via `POST /api/pipelines/:id/subscribers`.
-- [ ] **Step 4:** POST JSON body to `POST /webhooks/:slug`.
-- [ ] **Step 5:** Verify job exists in DB with `status: "pending"`.
+- [x] **Step 4:** POST JSON body to `POST /webhooks/:slug`.
+- [x] **Step 5:** Verify job exists in DB with `status: "pending"`.
 - [x] **Step 6:** CI passes
 
 ---
