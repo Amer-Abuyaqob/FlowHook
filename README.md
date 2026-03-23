@@ -50,6 +50,16 @@ npm start
 
 The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8), **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE), **subscriber routes** at **`/api/pipelines/:id/subscribers`** (POST, DELETE), and **webhook ingestion** at **`POST /webhooks/:slug`** (unauthenticated; enqueues a `pending` job). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline and subscriber routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
 
+### Quick Start — Docker
+
+```bash
+docker compose build api worker
+docker compose up -d
+curl http://localhost:8080/api/healthz
+```
+
+Migrations run automatically before the API and worker start. Default API key: `dev-api-key` (or set `API_KEY` env var).
+
 ## 🚀 Quick Start — API Usage
 
 | Method   | Path                                    | Description                       |
@@ -112,4 +122,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Deployment and local runtime alignment updates completed. Defaults now use port `8080`, Docker Compose enforces explicit `DATABASE_URL` with API health checks, and CD deploys immutable Cloud Run image tags (`github.sha`) for traceability. Planning docs (`docs/TODO.md`, `docs/PROJECT_PLAN.md`, `docs/DESIGN_DECISIONS.md`) were updated to reflect webhook completion and the current worker rollout phase. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 complete. Docker entrypoint runs migrations automatically on `docker compose up`; no manual migration step needed. Create pipeline → add subscriber → POST webhook → job enqueued. See [personal/PR.md](personal/PR.md) for PR notes.
