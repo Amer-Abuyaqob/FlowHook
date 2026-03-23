@@ -286,14 +286,16 @@ src/
 
 - **Services:** `api`, `worker`, `postgres`.
 - **api:** Build from Dockerfile, run `node dist/index.js`, depends on postgres, exposes PORT.
-- **worker:** Same image, different command: `node dist/worker.js`, depends on postgres.
+- **worker:** Same image, different command: `node dist/worker.js`, depends on postgres. In the current phase, this is local-dev oriented; production worker rollout is phase-next.
 - **postgres:** Official image, volume for data, env for user/pass/db.
 - **Env:** Pass `DATABASE_URL`, `API_KEY`, `PORT` via compose env or `.env`.
+- **Default runtime port:** `8080` for container and deployment consistency.
 
 ### 7.2 GitHub Actions CI
 
 - **On push/PR:** Checkout, setup Node, `npm ci`, `npm run build`, `npm test`.
 - **DB for tests:** Use `postgres` service in Actions or in-memory SQLite for unit tests if you add that path; for integration tests, spawn Postgres in CI.
+- **CD deploy shape (current phase):** Deploy API service first. Use immutable image tags (`github.sha`) for traceable Cloud Run deploys, keep DB migrations in GitHub Actions, and keep platform access public while app routes remain API-key protected.
 
 ---
 

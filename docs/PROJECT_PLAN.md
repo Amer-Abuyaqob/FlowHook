@@ -88,13 +88,13 @@ Implement in this order—each step builds on the previous:
 - **DB**: All 4 tables (pipelines, subscribers, jobs, delivery_attempts) via Drizzle schema + migrations
 - **API**: Pipeline CRUD, Subscriber CRUD, `GET /api/healthz`, `POST /webhooks/:slug` (validate, enqueue, 202)
 - **Auth**: API key middleware for protected routes; webhook route stays unprotected
-- **Docker**: `docker-compose.yml` with `api`, `worker`, `postgres` (worker will fail until Phase 2); use `node:24-alpine` in Dockerfile
+- **Docker**: `docker-compose.yml` with `api`, `worker`, `postgres` (worker is local-dev oriented until worker phase is production-ready); current Dockerfile uses `node:22-alpine`
 - **CI**: `.github/workflows/ci.yml` — `npm ci`, `build`, `test`; use `node-version: '24'` or `node-version-file: '.nvmrc'`
 - **Tests**: Unit + integration tests for pipeline CRUD, subscriber CRUD, webhook ingestion, auth
 
 ### 1.3 Base Complete When
 
-- `docker compose up` runs API + Postgres
+- `docker compose up` runs API + Postgres on port `8080`
 - Creating a pipeline, adding a subscriber, and POSTing to `/webhooks/:slug` enqueues a job with `status: pending`
 - CI passes
 
