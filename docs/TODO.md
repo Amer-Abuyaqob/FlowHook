@@ -456,95 +456,188 @@ These are installed via `npm install` when you create the project — no global 
 
 ## Phase 2: Worker Skeleton (branch `feat/worker`)
 
-- [ ] **Create branch:** `git checkout -b feat/worker`
+**Scope:** Job poller loop, action dispatcher, transform action (real), filter/template (stubs), delivery stub. Worker processes transform jobs end-to-end; delivery is no-op.
+
+**Merge when:** Jobs with `action_type: transform` process end-to-end (result stored, status `completed`). Filter/template throw when used.
 
 ---
 
-### 2.1 Worker Entry Point
+### 2.0 Branch Setup
 
-- [ ] **Create `src/worker.ts`**
-  - [ ] Import config, db
-  - [ ] Start infinite loop (or use a simple `while(true)` with poll + process)
-  - [ ] On error, log and continue (don't crash)
+- [ ] **Step 1:** Create branch `feat/worker` from `main`
+  - [ ] Run: `git checkout main && git pull && git checkout -b feat/worker`
 
 ---
 
-### 2.2 Job Poller
+### 2.1 Config: Worker Poll Interval
 
-- [ ] **Add to `src/services/job.ts`**
-  - [ ] `claimNextJob()` — `SELECT ... FROM jobs WHERE status = 'pending' FOR UPDATE SKIP LOCKED LIMIT 1`
-  - [ ] Update status to `processing`, set `processing_started_at`
-  - [ ] Return job or null
-- [ ] **Handle transaction** so claim is atomic
-
----
-
-### 2.3 Action Dispatcher
-
-- [ ] **Create `src/services/actions/index.ts`**
-  - [ ] `runAction(actionType, actionConfig, payload): Promise<{ result: unknown } | { filtered: true }>`
-  - [ ] Switch on actionType → call transform, filter, or template
-  - [ ] Filter returns `{ filtered: true }` when event is dropped
+- [ ] **Step 1:** Add poll interval to `src/config.ts`
+  - [ ] Read `WORKER_POLL_INTERVAL_MS` from env (default: `1000`)
+  - [ ] Parse as positive integer; if invalid, use default
+  - [ ] Export in config object (e.g. `config.worker.pollIntervalMs`)
+- [ ] **Step 2:** Add to `.env.example`
+  - [ ] `WORKER_POLL_INTERVAL_MS=1000`
+- [ ] **Step 3:** Add JSDoc for the new config property
 
 ---
 
-### 2.4 Transform Action (Real)
+### 2.2 JSON Path Helper (lib)
 
-- [ ] **Create `src/services/actions/transform.ts`**
-  - [ ] Parse `action_config.mappings` — array of `{ from, to, optional? }`
-  - [ ] For each mapping: get value at path `from` (e.g. lodash get or custom)
-  - [ ] If not optional and missing → throw or return error
-  - [ ] Set value at path `to` in output object
-  - [ ] Return transformed object
-- [ ] **Unit test transform**
-  - [ ] Simple field rename
-  - [ ] Optional field missing → no error
-  - [ ] Required field missing → error
-
----
-
-### 2.5 Filter Action (Stub)
-
-- [ ] **Create `src/services/actions/filter.ts`**
-  - [ ] Export `run(config, payload)` — throw "Not implemented" or return `{ filtered: true }` always
+- [ ] **Step 1:** Create `src/lib/jsonPath.ts`
+  - [ ] Add module JSDoc: dot-notation path helpers for action payloads
+- [ ] **Step 2:** Implement `getValueAtPath(obj: unknown, path: string): unknown`
+  - [ ] Split path by `.`; walk obj by each segment
+  - [ ] Return value at path, or `undefined` if not found
+  - [ ] Handle null/undefined intermediate values
+- [ ] **Step 3:** Implement `setValueAtPath(obj: Record<string, unknown>, key: string, value: unknown): void`
+  - [ ] For Phase 2: `key` is flat only (no dots); set `obj[key] = value`
+  - [ ] Add JSDoc noting flat keys only for v1
+- [ ] **Step 4:** Add JSDoc to both functions (`@param`, `@returns`)
+- [ ] **Step 5:** Create `src/lib/jsonPath.test.ts`
+  - [ ] Test `getValueAtPath({ a: 1 }, "a")` → `1`
+  - [ ] Test `getValueAtPath({ a: { b: 2 } }, "a.b")` → `2`
+  - [ ] Test `getValueAtPath({}, "x")` → `undefined`
+  - [ ] Test `setValueAtPath({}, "foo", 42)` mutates obj to `{ foo: 42 }`
 
 ---
 
-### 2.6 Template Action (Stub)
+### 2.3 Job Claim Query (db layer)
 
-- [ ] **Create `src/services/actions/template.ts`**
-  - [ ] Export `run(config, payload)` — throw "Not implemented"
+- [ ] **Step 1:** Add `updateJob` to `src/db/queries/jobs.ts`
+  - [ ] Signature: `updateJob(db, jobId, updates): Promise<JobRow | undefined>`
+  - [ ] `updates` type: `{ status?, result?, processingStartedAt?, processingEndedAt? }`
+  - [ ] Use `db.update(jobs).set({ ...updates }).where(eq(jobs.id, jobId)).returning()`
+  - [ ] Return first row or undefined
+  - [ ] Add JSDoc
+- [ ] **Step 2:** Add `claimNextPendingJob` to `src/db/queries/jobs.ts`
+  - [ ] Signature: `claimNextPendingJob(db): Promise<JobRow | null>`
+  - [ ] Use `db.transaction(async (tx) => { ... })` for atomic claim
+  - [ ] Inside tx: `SELECT * FROM jobs WHERE status = 'pending' ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED` (Drizzle: `.for('update', { skipLocked: true })`)
+  - [ ] If no row → return null
+  - [ ] Else: `UPDATE jobs SET status = 'processing', processing_started_at = now() WHERE id = ?`
+  - [ ] Return the claimed job row
+  - [ ] Add JSDoc
+- [ ] **Step 3:** Add module JSDoc update if needed
 
 ---
 
-### 2.7 Delivery Stub
+### 2.4 Job Service: Claim
 
-- [ ] **Create `src/lib/delivery.ts`**
-  - [ ] `deliverToSubscribers(pipeline, result, jobId): Promise<void>` — no-op (do nothing)
-  - [ ] Define `DeliverySigner` interface for future HMAC; v1 no-op
+- [ ] **Step 1:** Add `claimNextJob` to `src/services/job.ts`
+  - [ ] Call `assertDbConnection(db)`
+  - [ ] Call `claimNextPendingJob(db)` and return result
+  - [ ] Return type: `Promise<JobRow | null>`
+- [ ] **Step 2:** Worker will call `updateJob` from `db/queries/jobs` directly (no service wrapper needed)
+- [ ] **Step 3:** Add JSDoc for `claimNextJob`
 
 ---
 
-### 2.8 Worker Processing Loop
+### 2.5 Action Dispatcher
 
-- [ ] **Implement full loop in `src/worker.ts`**
+- [ ] **Step 1:** Create `src/services/actions/index.ts`
+  - [ ] Add module JSDoc: dispatches to transform, filter, or template by action type
+- [ ] **Step 2:** Define return type: `{ result: unknown } | { filtered: true }`
+- [ ] **Step 3:** Export `runAction(actionType, actionConfig, payload): Promise<...>`
+  - [ ] Switch on `actionType`; call `runTransform`, `runFilter`, or `runTemplate`
+  - [ ] Re-export or import from `./transform.js`, `./filter.js`, `./template.js`
+- [ ] **Step 4:** Add JSDoc with `@param`, `@returns`, `@throws`
+
+---
+
+### 2.6 Transform Action (real implementation)
+
+- [ ] **Step 1:** Create `src/services/actions/transform.ts`
+  - [ ] Add module JSDoc: transform action — rename/reshape JSON fields per mappings
+- [ ] **Step 2:** Import `getValueAtPath`, `setValueAtPath` from `../../lib/jsonPath.js`
+- [ ] **Step 3:** Import `TransformActionConfig` from `../../db/types.js`
+- [ ] **Step 4:** Export `runTransform(config: TransformActionConfig, payload: unknown): { result: Record<string, unknown> }`
+  - [ ] Assume config is valid (already validated on pipeline create)
+  - [ ] Create output object `{}`
+  - [ ] For each mapping: `value = getValueAtPath(payload, mapping.from)`
+  - [ ] If `value === undefined` and `!mapping.optional` → throw `Error("Required field missing: ...")`
+  - [ ] If defined or optional: `setValueAtPath(output, mapping.to, value)` (flat `to` only)
+  - [ ] Return `{ result: output }`
+- [ ] **Step 5:** Add JSDoc
+- [ ] **Step 6:** Create `src/services/actions/transform.test.ts`
+  - [ ] Simple rename: `{ from: "a", to: "b" }` + `{ a: 1 }` → `{ result: { b: 1 } }`
+  - [ ] Optional missing: `{ from: "x", to: "y", optional: true }` + `{}` → `{ result: { y: undefined } }` (or omit key — define behavior)
+  - [ ] Required missing: `{ from: "x", to: "y" }` + `{}` → throws
+
+---
+
+### 2.7 Filter Action (stub)
+
+- [ ] **Step 1:** Create `src/services/actions/filter.ts`
+  - [ ] Add module JSDoc: filter action stub — not implemented in Phase 2
+- [ ] **Step 2:** Export `runFilter(_config, _payload): never`
+  - [ ] Throw `new Error("Filter action is not implemented")`
+- [ ] **Step 3:** Add JSDoc with `@throws`
+
+---
+
+### 2.8 Template Action (stub)
+
+- [ ] **Step 1:** Create `src/services/actions/template.ts`
+  - [ ] Add module JSDoc: template action stub — not implemented in Phase 2
+- [ ] **Step 2:** Export `runTemplate(_config, _payload): never`
+  - [ ] Throw `new Error("Template action is not implemented")`
+- [ ] **Step 3:** Add JSDoc with `@throws`
+
+---
+
+### 2.9 Delivery Stub
+
+- [ ] **Step 1:** Create `src/lib/delivery.ts`
+  - [ ] Add module JSDoc: delivery to subscribers; Phase 2 is no-op stub
+- [ ] **Step 2:** Define `DeliverySigner` interface
+  - [ ] `sign(payload: string): string` — for future HMAC
+  - [ ] Add JSDoc: v1 implementation returns `""`
+- [ ] **Step 3:** Export `deliverToSubscribers(subscribers, result, jobId): Promise<void>`
+  - [ ] Params: `SubscriberRow[]`, `unknown`, `string`
+  - [ ] Body: no-op (do nothing)
+  - [ ] Add JSDoc
+
+---
+
+### 2.10 Worker Processing Loop
+
+- [ ] **Step 1:** Update `src/worker.ts` — add module JSDoc (worker entry, polls jobs, runs actions)
+- [ ] **Step 2:** Import: `db`, `assertDbConnection`, `config`, `claimNextJob`, `updateJob` (from queries), `getPipelineById`, `getSubscribersByPipelineId`, `runAction`, `deliverToSubscribers`
+- [ ] **Step 3:** Add `sleep(ms: number): Promise<void>` helper (e.g. `return new Promise(r => setTimeout(r, ms))`)
+- [ ] **Step 4:** Implement main loop: `while (true)`
   - [ ] Call `claimNextJob()`
-  - [ ] If null, sleep (e.g. 1s) and continue
-  - [ ] Fetch pipeline (with subscribers) by job.pipeline_id
-  - [ ] Call `runAction(pipeline.action_type, pipeline.action_config, job.payload)`
-  - [ ] If `{ filtered: true }` → update job status `filtered`, set `processing_ended_at`
-  - [ ] Else → store result in job.result, call `deliverToSubscribers` (stub), update status `completed`, set `processing_ended_at`
-  - [ ] On error → update status `failed`, set `processing_ended_at`, log
-- [ ] **Integration test**
-  - [ ] Create pipeline with action_type transform, enqueue job, run worker, verify job completed with result
+  - [ ] If `null` → `await sleep(config.worker.pollIntervalMs)`, continue
+  - [ ] Assert db; fetch pipeline via `getPipelineById(db, job.pipelineId)`
+  - [ ] If pipeline missing → log error, update job `failed`, continue
+  - [ ] Fetch subscribers via `getSubscribersByPipelineId(db, job.pipelineId)`
+  - [ ] Try: `outcome = await runAction(pipeline.actionType, pipeline.actionConfig, job.payload)`
+  - [ ] If `{ filtered: true }` → update job: `status: 'filtered'`, `result: null`, `processingEndedAt: new Date()`
+  - [ ] Else → update job: `status: 'completed'`, `result: outcome.result`, `processingEndedAt: new Date()`; call `deliverToSubscribers(subscribers, outcome.result, job.id)`
+  - [ ] Catch: `const message = e instanceof Error ? e.message : String(e)`; `console.error("Error:", message)`; update job `failed`, `processingEndedAt`
+- [ ] **Step 5:** Ensure worker exits if `db` is undefined (e.g. log and exit with code 1)
+
+---
+
+### 2.11 Integration Test
+
+- [ ] **Step 1:** Create `src/worker.integration.test.ts`
+  - [ ] Use `describe.skipIf(!hasDbUrl || !hasApiKey)` pattern (match webhooks test)
+- [ ] **Step 2:** Test: create pipeline with transform, enqueue job, run worker once, verify job completed
+  - [ ] Create pipeline via API (transform, mappings `[{ from: "x", to: "y" }]`)
+  - [ ] POST to webhook with `{ x: 123 }`
+  - [ ] Call worker processing logic (or spawn worker process and poll — prefer invoking processing function if exported)
+  - [ ] Query jobs table: status `completed`, result `{ y: 123 }`
+- [ ] **Step 3:** If worker loop is not easily testable in-process, document manual verification step as fallback
 
 ---
 
 ### Phase 2 Complete When
 
-- [ ] Worker processes transform jobs end-to-end (result stored, status completed)
-- [ ] Filter/template throw when used (acceptable for now)
-- [ ] Merge `feat/worker` into `main`
+- [ ] **Step 1:** Worker processes transform jobs end-to-end (result stored, status `completed`)
+- [ ] **Step 2:** Filter and template throw when used (acceptable for Phase 2)
+- [ ] **Step 3:** All unit and integration tests pass
+- [ ] **Step 4:** `npm run build` succeeds
+- [ ] **Step 5:** Merge `feat/worker` into `main`
 
 ---
 
