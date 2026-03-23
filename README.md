@@ -50,6 +50,16 @@ npm start
 
 The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8), **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE), **subscriber routes** at **`/api/pipelines/:id/subscribers`** (POST, DELETE), and **webhook ingestion** at **`POST /webhooks/:slug`** (unauthenticated; enqueues a `pending` job). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline and subscriber routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
 
+### Quick Start — Docker
+
+```bash
+docker compose build api worker
+docker compose up -d
+curl http://localhost:8080/api/healthz
+```
+
+Migrations run automatically before the API and worker start. Default API key: `dev-api-key` (or set `API_KEY` env var).
+
 ## 🚀 Quick Start — API Usage
 
 | Method   | Path                                    | Description                       |
@@ -112,4 +122,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Webhook ingestion endpoint implemented (section `1.12`). Added `POST /webhooks/:slug` to validate pipelines and enqueue `pending` jobs, plus integration tests and standardized malformed JSON handling (`400 Invalid JSON`). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 complete. Docker entrypoint runs migrations automatically on `docker compose up`; no manual migration step needed. Create pipeline → add subscriber → POST webhook → job enqueued. See [personal/PR.md](personal/PR.md) for PR notes.
