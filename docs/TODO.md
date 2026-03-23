@@ -2,7 +2,7 @@
 
 Deeply detailed step-by-step checklist. Work top-to-bottom within each phase. Check off items as you complete them.
 
-**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, and pipeline APIs are done. Subscriber routes, webhooks, and worker processing are pending.
+**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, pipeline APIs, and subscriber routes are done. Webhooks and worker processing are pending.
 
 ---
 
@@ -307,46 +307,46 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.9 Subscriber Service
 
-- [ ] **Create `src/services/subscriber.ts`** (or add to pipeline.ts)
-  - [ ] **Step 1:** Create file `src/services/subscriber.ts`.
-  - [ ] **Step 2:** Implement `addSubscriber(pipelineId, url, headers?)`:
-    - [ ] Assert db connection.
-    - [ ] Validate URL format: `new URL(url)` or regex for http(s) URL.
-    - [ ] Insert: `db.insert(subscribers).values({ pipelineId, url, headers: headers ?? null }).returning()`.
-    - [ ] Return subscriber row.
-    - [ ] Optionally verify pipeline exists first; if not, throw or return null.
-  - [ ] **Step 3:** Implement `removeSubscriber(pipelineId, subscriberId)`:
-    - [ ] Delete where `subscriberId` AND `pipelineId` match (ensures ownership): `db.delete(subscribers).where(and(eq(subscribers.id, subscriberId), eq(subscribers.pipelineId, pipelineId))).returning()`.
-    - [ ] Return deleted row or null.
-  - [ ] **Step 4:** Implement `getSubscribersByPipelineId(pipelineId)`:
-    - [ ] `db.select().from(subscribers).where(eq(subscribers.pipelineId, pipelineId))`.
-    - [ ] Return array.
+- [x] **Create `src/services/subscriber.ts`** (or add to pipeline.ts)
+  - [x] **Step 1:** Create file `src/services/subscriber.ts`.
+  - [x] **Step 2:** Implement `addSubscriber(pipelineId, url, headers?)`:
+    - [x] Assert db connection.
+    - [x] Validate URL format: `new URL(url)` or regex for http(s) URL.
+    - [x] Insert: `db.insert(subscribers).values({ pipelineId, url, headers: headers ?? null }).returning()`.
+    - [x] Return subscriber row.
+    - [x] Optionally verify pipeline exists first; if not, throw or return null.
+  - [x] **Step 3:** Implement `removeSubscriber(pipelineId, subscriberId)`:
+    - [x] Delete where `subscriberId` AND `pipelineId` match (ensures ownership): `db.delete(subscribers).where(and(eq(subscribers.id, subscriberId), eq(subscribers.pipelineId, pipelineId))).returning()`.
+    - [x] Return deleted row or null.
+  - [x] **Step 4:** Implement `getSubscribersByPipelineId(pipelineId)`:
+    - [x] `db.select().from(subscribers).where(eq(subscribers.pipelineId, pipelineId))`.
+    - [x] Return array.
 
 ---
 
 ### 1.10 Subscriber Routes
 
-- [ ] **Add subscriber endpoints**
-  - [ ] **Step 1:** In `src/routes/pipelines.ts` or new `src/routes/subscribers.ts`, add nested routes.
-  - [ ] **Step 2:** `POST /api/pipelines/:id/subscribers`:
-    - [ ] Get `pipelineId` from `req.params.id`.
-    - [ ] Call `getPipelineById(pipelineId)`; if null → 404.
-    - [ ] Parse body: `{ url, headers? }`.
-    - [ ] Validate `url` (required, valid URL format).
-    - [ ] Call `addSubscriber(pipelineId, url, headers)`.
-    - [ ] Return 201 with subscriber.
-  - [ ] **Step 3:** `DELETE /api/pipelines/:id/subscribers/:subscriberId`:
-    - [ ] Get `pipelineId`, `subscriberId` from params.
-    - [ ] Call `getPipelineById(pipelineId)`; if null → 404.
-    - [ ] Call `removeSubscriber(pipelineId, subscriberId)`; if null → 404.
-    - [ ] Return 204.
-  - [ ] **Step 4:** Mount routes: e.g. `router.post("/:id/subscribers", ...)` and `router.delete("/:id/subscribers/:subscriberId", ...)` on pipelines router.
-- [ ] **Integration tests for subscriber CRUD**
-  - [ ] **Step 5:** Test add: create pipeline, POST subscriber, expect 201.
-  - [ ] **Step 6:** Test add with invalid pipeline id → 404.
-  - [ ] **Step 7:** Test add with invalid URL → 400.
-  - [ ] **Step 8:** Test remove: add subscriber, DELETE, expect 204.
-  - [ ] **Step 9:** Test remove with wrong pipeline id → 404.
+- [x] **Add subscriber endpoints**
+  - [x] **Step 1:** In `src/routes/pipelines.ts` or new `src/routes/subscribers.ts`, add nested routes.
+  - [x] **Step 2:** `POST /api/pipelines/:id/subscribers`:
+    - [x] Get `pipelineId` from `req.params.id`.
+    - [x] Call `getPipelineById(pipelineId)`; if null → 404.
+    - [x] Parse body: `{ url, headers? }`.
+    - [x] Validate `url` (required, valid URL format).
+    - [x] Call `addSubscriber(pipelineId, url, headers)`.
+    - [x] Return 201 with subscriber.
+  - [x] **Step 3:** `DELETE /api/pipelines/:id/subscribers/:subscriberId`:
+    - [x] Get `pipelineId`, `subscriberId` from params.
+    - [x] Call `getPipelineById(pipelineId)`; if null → 404.
+    - [x] Call `removeSubscriber(pipelineId, subscriberId)`; if null → 404.
+    - [x] Return 204.
+  - [x] **Step 4:** Mount routes: e.g. `router.post("/:id/subscribers", ...)` and `router.delete("/:id/subscribers/:subscriberId", ...)` on pipelines router.
+- [x] **Integration tests for subscriber CRUD**
+  - [x] **Step 5:** Test add: create pipeline, POST subscriber, expect 201.
+  - [x] **Step 6:** Test add with invalid pipeline id → 404.
+  - [x] **Step 7:** Test add with invalid URL → 400.
+  - [x] **Step 8:** Test remove: add subscriber, DELETE, expect 204.
+  - [x] **Step 9:** Test remove with wrong pipeline id → 404.
 
 ---
 
@@ -428,17 +428,17 @@ These are installed via `npm install` when you create the project — no global 
     - [x] **Step 4:** Same with `headers: { "x-api-key": "secret" }`.
     - [x] **Step 5:** `headers: {}` → `{ valid: false }`.
     - [x] **Step 6:** Wrong key → `{ valid: false }`.
-  - [ ] **Slug generation and validation** (`src/lib/slug.test.ts`)
-    - [ ] **Step 1:** Test `generateSlug("My Stripe Orders")` → `"my-stripe-orders"`.
-    - [ ] **Step 2:** Test `generateSlug("  spaces  ")` → `"spaces"`.
-    - [ ] **Step 3:** Test `validateSlug("valid-slug")` → true, `validateSlug("Invalid")` → false.
-  - [ ] **Action config parsing** (optional) — validate in pipeline service; add unit test for validation helper if extracted.
+  - [x] **Slug generation and validation** (`src/lib/slug.test.ts`)
+    - [x] **Step 1:** Test `generateSlug("My Stripe Orders")` → `"my-stripe-orders"`.
+    - [x] **Step 2:** Test `generateSlug("  spaces  ")` → `"spaces"`.
+    - [x] **Step 3:** Test `validateSlug("valid-slug")` → true, `validateSlug("Invalid")` → false.
+  - [x] **Action config parsing** (optional) — validate in pipeline service; add unit test for validation helper if extracted.
 - **Integration tests** (partial)
   - [x] DB integration (`db/db.integration.test.ts` — conditional on DATABASE_URL)
   - [x] Smoke test (`smoke.test.ts`)
   - [x] **Health endpoint**: `GET /api/healthz` → 200, body "OK".
-  - [ ] **Pipeline CRUD**: See 1.8 Step 10–18.
-  - [ ] **Subscriber CRUD**: See 1.10 Step 5–9.
+  - [x] **Pipeline CRUD**: See 1.8 Step 10–18.
+  - [x] **Subscriber CRUD**: See 1.10 Step 5–9.
   - [ ] **Webhook ingestion**: See 1.12 Step 6–11.
   - [ ] **401 on protected routes**: Request without API key → 401.
 
@@ -447,8 +447,8 @@ These are installed via `npm install` when you create the project — no global 
 ### Phase 1 Complete When
 
 - [ ] **Step 1:** Run `docker compose up` — api and postgres start without error.
-- [ ] **Step 2:** Create pipeline via `POST /api/pipelines` (with API key).
-- [ ] **Step 3:** Add subscriber via `POST /api/pipelines/:id/subscribers`.
+- [x] **Step 2:** Create pipeline via `POST /api/pipelines` (with API key).
+- [x] **Step 3:** Add subscriber via `POST /api/pipelines/:id/subscribers`.
 - [ ] **Step 4:** POST JSON body to `POST /webhooks/:slug`.
 - [ ] **Step 5:** Verify job exists in DB with `status: "pending"`.
 - [x] **Step 6:** CI passes

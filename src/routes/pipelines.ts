@@ -1,7 +1,8 @@
 /**
- * Pipeline CRUD routes: create, list, get by id, update, delete.
+ * Pipeline CRUD routes.
  *
  * Mount this router under a prefix (e.g. /api) so callers use POST /api/pipelines, etc.
+ * Subscriber routes are in a separate router mounted at /:id/subscribers.
  * All routes require API key authentication.
  */
 import type { Request, Response, NextFunction } from "express";
@@ -20,6 +21,7 @@ import {
   updatePipeline,
 } from "../services/pipeline.js";
 import { authMiddleware } from "../auth/authMiddleware.js";
+import subscribersRouter from "./subscribers.js";
 
 const pipelinesApi = Router();
 pipelinesApi.use(authMiddleware);
@@ -124,6 +126,7 @@ async function deletePipelineHandler(
 
 pipelinesApi.post("/", createPipelineHandler);
 pipelinesApi.get("/", listPipelinesHandler);
+pipelinesApi.use("/:id/subscribers", subscribersRouter);
 pipelinesApi.get("/:id", getPipelineByIdHandler);
 pipelinesApi.put("/:id", updatePipelineHandler);
 pipelinesApi.delete("/:id", deletePipelineHandler);
