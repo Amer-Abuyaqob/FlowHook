@@ -4,6 +4,7 @@
  * Used by subscriber routes to produce consistent JSON responses per API.md.
  */
 import type { SubscriberRow } from "../db/queries/subscribers.js";
+import { toIsoString } from "./dateFormat.js";
 
 /**
  * API response shape for a subscriber (snake_case, per API.md).
@@ -36,17 +37,4 @@ export function toApiSubscriber(row: SubscriberRow): SubscriberApiResponse {
     headers: row.headers ?? null,
     created_at: toIsoString(row.createdAt),
   };
-}
-
-/**
- * Converts a value to an ISO 8601 string.
- *
- * @param value - Date instance or value that can be stringified.
- * @returns ISO 8601 string.
- */
-function toIsoString(value: Date | unknown): string {
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-  return String(value);
 }

@@ -4,6 +4,7 @@
  * Used by pipeline routes to produce consistent JSON responses per API.md.
  */
 import type { PipelineRow } from "../db/queries/pipelines.js";
+import { toIsoString } from "./dateFormat.js";
 
 /**
  * API response shape for a pipeline (snake_case, per API.md).
@@ -53,17 +54,4 @@ export function toApiPipeline(
     updated_at: toIsoString(row.updatedAt),
     webhookUrl: `${base}/webhooks/${row.slug}`,
   };
-}
-
-/**
- * Converts a value to an ISO 8601 string.
- *
- * @param value - Date instance or value that can be stringified.
- * @returns ISO 8601 string.
- */
-function toIsoString(value: Date | unknown): string {
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-  return String(value);
 }
