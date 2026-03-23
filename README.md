@@ -48,20 +48,22 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8) and **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8), **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE), and **subscriber routes** at **`/api/pipelines/:id/subscribers`** (POST, DELETE). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline and subscriber routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
 
 ## 🚀 Quick Start — API Usage
 
-| Method   | Path                 | Description                     |
-| -------- | -------------------- | ------------------------------- |
-| `GET`    | `/`                  | Redirects to `/app/` (302)      |
-| `GET`    | `/app/`              | API documentation (HTML)        |
-| `GET`    | `/api/healthz`       | Liveness (text OK)              |
-| `POST`   | `/api/pipelines`     | Create pipeline (auth required) |
-| `GET`    | `/api/pipelines`     | List pipelines (auth required)  |
-| `GET`    | `/api/pipelines/:id` | Get pipeline by id (auth)       |
-| `PUT`    | `/api/pipelines/:id` | Update pipeline (auth)          |
-| `DELETE` | `/api/pipelines/:id` | Delete pipeline (auth)          |
+| Method   | Path                                    | Description                       |
+| -------- | --------------------------------------- | --------------------------------- |
+| `GET`    | `/`                                     | Redirects to `/app/` (302)        |
+| `GET`    | `/app/`                                 | API documentation (HTML)          |
+| `GET`    | `/api/healthz`                          | Liveness (text OK)                |
+| `POST`   | `/api/pipelines`                        | Create pipeline (auth required)   |
+| `GET`    | `/api/pipelines`                        | List pipelines (auth required)    |
+| `GET`    | `/api/pipelines/:id`                    | Get pipeline by id (auth)         |
+| `PUT`    | `/api/pipelines/:id`                    | Update pipeline (auth)            |
+| `DELETE` | `/api/pipelines/:id`                    | Delete pipeline (auth)            |
+| `POST`   | `/api/pipelines/:id/subscribers`        | Add subscriber (auth required)    |
+| `DELETE` | `/api/pipelines/:id/subscribers/:subId` | Remove subscriber (auth required) |
 
 Examples:
 
@@ -109,4 +111,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Pipeline CRUD API implemented (sections 1.7, 1.8). Endpoints: POST/GET/PUT/DELETE `/api/pipelines` with auth, validation, serialization, and `webhookUrl`. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Pipeline and subscriber APIs implemented (sections 1.7–1.10). Endpoints: POST/GET/PUT/DELETE `/api/pipelines`; POST/DELETE `/api/pipelines/:id/subscribers` with auth, validation, and serialization. See [personal/PR.md](personal/PR.md) for PR notes.
