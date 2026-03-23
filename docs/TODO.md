@@ -471,64 +471,64 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.1 Config: Worker Poll Interval
 
-- [ ] **Step 1:** Add poll interval to `src/config.ts`
-  - [ ] Read `WORKER_POLL_INTERVAL_MS` from env (default: `1000`)
-  - [ ] Parse as positive integer; if invalid, use default
-  - [ ] Export in config object (e.g. `config.worker.pollIntervalMs`)
-- [ ] **Step 2:** Add to `.env.example`
-  - [ ] `WORKER_POLL_INTERVAL_MS=1000`
-- [ ] **Step 3:** Add JSDoc for the new config property
+- [x] **Step 1:** Add poll interval to `src/config.ts`
+  - [x] Read `WORKER_POLL_INTERVAL_MS` from env (default: `1000`)
+  - [x] Parse as positive integer; if invalid, use default
+  - [x] Export in config object (e.g. `config.worker.pollIntervalMs`)
+- [x] **Step 2:** Add to `.env.example`
+  - [x] `WORKER_POLL_INTERVAL_MS=1000`
+- [x] **Step 3:** Add JSDoc for the new config property
 
 ---
 
 ### 2.2 JSON Path Helper (lib)
 
-- [ ] **Step 1:** Create `src/lib/jsonPath.ts`
-  - [ ] Add module JSDoc: dot-notation path helpers for action payloads
-- [ ] **Step 2:** Implement `getValueAtPath(obj: unknown, path: string): unknown`
-  - [ ] Split path by `.`; walk obj by each segment
-  - [ ] Return value at path, or `undefined` if not found
-  - [ ] Handle null/undefined intermediate values
-- [ ] **Step 3:** Implement `setValueAtPath(obj: Record<string, unknown>, key: string, value: unknown): void`
-  - [ ] For Phase 2: `key` is flat only (no dots); set `obj[key] = value`
-  - [ ] Add JSDoc noting flat keys only for v1
-- [ ] **Step 4:** Add JSDoc to both functions (`@param`, `@returns`)
-- [ ] **Step 5:** Create `src/lib/jsonPath.test.ts`
-  - [ ] Test `getValueAtPath({ a: 1 }, "a")` → `1`
-  - [ ] Test `getValueAtPath({ a: { b: 2 } }, "a.b")` → `2`
-  - [ ] Test `getValueAtPath({}, "x")` → `undefined`
-  - [ ] Test `setValueAtPath({}, "foo", 42)` mutates obj to `{ foo: 42 }`
+- [x] **Step 1:** Create `src/lib/jsonPath.ts`
+  - [x] Add module JSDoc: dot-notation path helpers for action payloads
+- [x] **Step 2:** Implement `getValueAtPath(obj: unknown, path: string): unknown`
+  - [x] Split path by `.`; walk obj by each segment
+  - [x] Return value at path, or `undefined` if not found
+  - [x] Handle null/undefined intermediate values
+- [x] **Step 3:** Implement `setValueAtPath(obj: Record<string, unknown>, key: string, value: unknown): void`
+  - [x] For Phase 2: `key` is flat only (no dots); set `obj[key] = value`
+  - [x] Add JSDoc noting flat keys only for v1
+- [x] **Step 4:** Add JSDoc to both functions (`@param`, `@returns`)
+- [x] **Step 5:** Create `src/lib/jsonPath.test.ts`
+  - [x] Test `getValueAtPath({ a: 1 }, "a")` → `1`
+  - [x] Test `getValueAtPath({ a: { b: 2 } }, "a.b")` → `2`
+  - [x] Test `getValueAtPath({}, "x")` → `undefined`
+  - [x] Test `setValueAtPath({}, "foo", 42)` mutates obj to `{ foo: 42 }`
 
 ---
 
 ### 2.3 Job Claim Query (db layer)
 
-- [ ] **Step 1:** Add `updateJob` to `src/db/queries/jobs.ts`
-  - [ ] Signature: `updateJob(db, jobId, updates): Promise<JobRow | undefined>`
-  - [ ] `updates` type: `{ status?, result?, processingStartedAt?, processingEndedAt? }`
-  - [ ] Use `db.update(jobs).set({ ...updates }).where(eq(jobs.id, jobId)).returning()`
-  - [ ] Return first row or undefined
-  - [ ] Add JSDoc
-- [ ] **Step 2:** Add `claimNextPendingJob` to `src/db/queries/jobs.ts`
-  - [ ] Signature: `claimNextPendingJob(db): Promise<JobRow | null>`
-  - [ ] Use `db.transaction(async (tx) => { ... })` for atomic claim
-  - [ ] Inside tx: `SELECT * FROM jobs WHERE status = 'pending' ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED` (Drizzle: `.for('update', { skipLocked: true })`)
-  - [ ] If no row → return null
-  - [ ] Else: `UPDATE jobs SET status = 'processing', processing_started_at = now() WHERE id = ?`
-  - [ ] Return the claimed job row
-  - [ ] Add JSDoc
-- [ ] **Step 3:** Add module JSDoc update if needed
+- [x] **Step 1:** Add `updateJob` to `src/db/queries/jobs.ts`
+  - [x] Signature: `updateJob(db, jobId, updates): Promise<JobRow | undefined>`
+  - [x] `updates` type: `{ status?, result?, processingStartedAt?, processingEndedAt? }`
+  - [x] Use `db.update(jobs).set({ ...updates }).where(eq(jobs.id, jobId)).returning()`
+  - [x] Return first row or undefined
+  - [x] Add JSDoc
+- [x] **Step 2:** Add `claimNextPendingJob` to `src/db/queries/jobs.ts`
+  - [x] Signature: `claimNextPendingJob(db): Promise<JobRow | null>`
+  - [x] Use `db.transaction(async (tx) => { ... })` for atomic claim
+  - [x] Inside tx: `SELECT * FROM jobs WHERE status = 'pending' ORDER BY created_at LIMIT 1 FOR UPDATE SKIP LOCKED` (Drizzle: `.for('update', { skipLocked: true })`)
+  - [x] If no row → return null
+  - [x] Else: `UPDATE jobs SET status = 'processing', processing_started_at = now() WHERE id = ?`
+  - [x] Return the claimed job row
+  - [x] Add JSDoc
+- [x] **Step 3:** Add module JSDoc update if needed
 
 ---
 
 ### 2.4 Job Service: Claim
 
-- [ ] **Step 1:** Add `claimNextJob` to `src/services/job.ts`
-  - [ ] Call `assertDbConnection(db)`
-  - [ ] Call `claimNextPendingJob(db)` and return result
-  - [ ] Return type: `Promise<JobRow | null>`
-- [ ] **Step 2:** Worker will call `updateJob` from `db/queries/jobs` directly (no service wrapper needed)
-- [ ] **Step 3:** Add JSDoc for `claimNextJob`
+- [x] **Step 1:** Add `claimNextJob` to `src/services/job.ts`
+  - [x] Call `assertDbConnection(db)`
+  - [x] Call `claimNextPendingJob(db)` and return result
+  - [x] Return type: `Promise<JobRow | null>`
+- [x] **Step 2:** Worker will call `updateJob` from `db/queries/jobs` directly (no service wrapper needed)
+- [x] **Step 3:** Add JSDoc for `claimNextJob`
 
 ---
 
