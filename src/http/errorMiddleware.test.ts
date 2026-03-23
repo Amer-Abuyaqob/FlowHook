@@ -52,6 +52,17 @@ describe("errorMiddleware", () => {
     );
   });
 
+  it("maps SyntaxError (e.g. malformed JSON) to 400 Invalid JSON", () => {
+    const { res, send } = mockRes();
+    const req = {} as Request;
+    const next = vi.fn();
+
+    errorMiddleware(new SyntaxError("Unexpected token"), req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(send).toHaveBeenCalledWith(JSON.stringify({ error: "Invalid JSON" }));
+  });
+
   it("maps UserForbiddenError to 403", () => {
     const { res } = mockRes();
     const req = {} as Request;

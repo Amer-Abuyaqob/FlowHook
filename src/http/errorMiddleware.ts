@@ -34,6 +34,9 @@ const INTERNAL_ERROR_MESSAGE = "Internal Server Error";
  * @returns HTTP status code corresponding to the error type.
  */
 function getStatusOfError(err: unknown): number {
+  // `express.json()` throws a SyntaxError for malformed JSON bodies.
+  // We treat it as a client error and return a stable error message.
+  if (err instanceof SyntaxError) return 400;
   if (!(err instanceof Error)) return 500;
   for (const [ErrorClass, status] of ERROR_STATUS_MAP) {
     if (err instanceof ErrorClass) return status;
@@ -62,6 +65,7 @@ function getErrorMessage(err: unknown): string {
  * @returns Message string that is safe to send to clients.
  */
 function getClientErrorMessage(err: unknown, status: number): string {
+  if (err instanceof SyntaxError) return "Invalid JSON";
   return status >= 500 ? INTERNAL_ERROR_MESSAGE : getErrorMessage(err);
 }
 
