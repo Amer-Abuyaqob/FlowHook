@@ -92,15 +92,12 @@ export async function claimNextPendingJob(
 
     if (!job) return null;
 
-    const [updated] = await tx
-      .update(jobs)
-      .set({
+    // tx has same update interface as db; cast needed for Drizzle's stricter DbClient type
+    return (
+      (await updateJob(tx as unknown as DbClient, job.id, {
         status: "processing",
         processingStartedAt: new Date(),
-      })
-      .where(eq(jobs.id, job.id))
-      .returning();
-
-    return updated ?? null;
+      })) ?? null
+    );
   });
 }
