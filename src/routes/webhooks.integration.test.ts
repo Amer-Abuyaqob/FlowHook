@@ -5,9 +5,9 @@
  * Skipped when DATABASE_URL or API_KEY is not set.
  */
 import request from "supertest";
-import { describe, expect, it, beforeAll, afterEach } from "vitest";
+import { describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
-import { assertDbConnection, db, jobs, pipelines } from "../db/index.js";
+import { assertDbConnection, db, jobs } from "../db/index.js";
 import { createApp } from "../index.js";
 
 const hasDbUrl =
