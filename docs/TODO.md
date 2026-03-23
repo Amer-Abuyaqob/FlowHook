@@ -352,14 +352,14 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.11 Job Service (Enqueue Only)
 
-- [ ] **Create `src/services/job.ts`**
-  - [ ] **Step 1:** Create file `src/services/job.ts`.
-  - [ ] **Step 2:** Import `db`, `assertDbConnection`, `jobs`, `eq`.
-  - [ ] **Step 3:** Implement `enqueueJob(pipelineId, payload)`:
-    - [ ] Assert db connection.
-    - [ ] `payload` is `unknown` (JSON body); store as JSONB.
-    - [ ] Insert: `db.insert(jobs).values({ pipelineId, status: "pending", payload }).returning({ id })`.
-    - [ ] Return `id` (UUID string).
+- [x] **Create `src/services/job.ts`**
+  - [x] **Step 1:** Create file `src/services/job.ts`.
+  - [x] **Step 2:** Import `db`, `assertDbConnection`, `jobs`, `eq`.
+  - [x] **Step 3:** Implement `enqueueJob(pipelineId, payload)`:
+    - [x] Assert db connection.
+    - [x] `payload` is `unknown` (JSON body); store as JSONB.
+    - [x] Insert: `db.insert(jobs).values({ pipelineId, status: "pending", payload }).returning({ id })`.
+    - [x] Return `id` (UUID string).
 
 ---
 
