@@ -29,7 +29,6 @@
     "@types/pg": "^8.18.0",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.1.0",
-    "drizzle-kit": "^0.31.10",
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
@@ -41,6 +40,7 @@
   },
   "dependencies": {
     "argon2": "^0.44.0",
+    "drizzle-kit": "^0.31.10",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
