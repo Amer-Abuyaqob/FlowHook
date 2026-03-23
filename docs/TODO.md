@@ -365,27 +365,27 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 1.12 Webhook Ingestion
 
-- [ ] **Create `src/routes/webhooks.ts`**
-  - [ ] **Step 1:** Create file `src/routes/webhooks.ts`.
-  - [ ] **Step 2:** Create router. Do **not** apply auth middleware (webhooks are unauthenticated).
-  - [ ] **Step 3:** `POST /webhooks/:slug`:
-    - [ ] `slug = req.params.slug`.
-    - [ ] Call `getPipelineBySlug(slug)` (from pipeline service).
-    - [ ] If null → `res.status(404).json({ error: "Pipeline not found" })`.
-    - [ ] If `!pipeline.isActive` → `res.status(400).json({ error: "Pipeline is inactive" })`.
-    - [ ] Parse body: `JSON.parse` or `express.json()` already parsed it. If invalid (caught), → 400.
-    - [ ] Call `enqueueJob(pipeline.id, req.body)`.
-    - [ ] Return `res.status(202).set("Job-Id", jobId).json({ jobId })` or empty body.
-    - [ ] Wrap in try/catch; on DB error → 500.
-  - [ ] **Step 4:** Mount: `app.use("/webhooks", webhooksRouter)` — route will be `POST /webhooks/:slug`. Ensure router defines `router.post("/:slug", handler)`.
-  - [ ] **Step 5:** Ensure `app.use(express.json())` is before webhooks so body is parsed.
-- [ ] **Integration test webhook ingest**
-  - [ ] **Step 6:** Create pipeline with transform action, get slug.
-  - [ ] **Step 7:** POST `{"foo":"bar"}` to `http://localhost:PORT/webhooks/{slug}`.
-  - [ ] **Step 8:** Expect 202, `Job-Id` header present.
-  - [ ] **Step 9:** Query jobs table; one job with `status: "pending"`, `payload` matches.
-  - [ ] **Step 10:** POST to `/webhooks/nonexistent` → 404.
-  - [ ] **Step 11:** POST invalid JSON (e.g. raw `{invalid`) → 400.
+- [x] **Create `src/routes/webhooks.ts`**
+  - [x] **Step 1:** Create file `src/routes/webhooks.ts`.
+  - [x] **Step 2:** Create router. Do **not** apply auth middleware (webhooks are unauthenticated).
+  - [x] **Step 3:** `POST /webhooks/:slug`:
+    - [x] `slug = req.params.slug`.
+    - [x] Call `getPipelineBySlug(slug)` (from pipeline service).
+    - [x] If null → `res.status(404).json({ error: "Pipeline not found" })`.
+    - [x] If `!pipeline.isActive` → `res.status(400).json({ error: "Pipeline is inactive" })`.
+    - [x] Parse body: `JSON.parse` or `express.json()` already parsed it. If invalid (caught), → 400.
+    - [x] Call `enqueueJob(pipeline.id, req.body)`.
+    - [x] Return `res.status(202).set("Job-Id", jobId).json({ jobId })` or empty body.
+    - [x] Wrap in try/catch; on DB error → 500.
+  - [x] **Step 4:** Mount: `app.use("/webhooks", webhooksRouter)` — route will be `POST /webhooks/:slug`. Ensure router defines `router.post("/:slug", handler)`.
+  - [x] **Step 5:** Ensure `app.use(express.json())` is before webhooks so body is parsed.
+- [x] **Integration test webhook ingest**
+  - [x] **Step 6:** Create pipeline with transform action, get slug.
+  - [x] **Step 7:** POST `{"foo":"bar"}` to `http://localhost:PORT/webhooks/{slug}`.
+  - [x] **Step 8:** Expect 202, `Job-Id` header present.
+  - [x] **Step 9:** Query jobs table; one job with `status: "pending"`, `payload` matches.
+  - [x] **Step 10:** POST to `/webhooks/nonexistent` → 404.
+  - [x] **Step 11:** POST invalid JSON (e.g. raw `{invalid`) → 400.
 
 ---
 

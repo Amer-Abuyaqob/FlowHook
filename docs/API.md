@@ -448,4 +448,4 @@ Output is a string; subscribers receive `{"body": "..."}` or similar wrapped res
 
 ---
 
-_Last updated: March 2025_
+_Last updated: March 2026_
