@@ -2,7 +2,13 @@
  * Unit tests for config module: parsePort, requireEnv, getOptionalEnv, and loadConfig.
  */
 import { describe, expect, it } from "vitest";
-import { config, getOptionalEnv, parsePort, requireEnv } from "./config.js";
+import {
+  config,
+  getOptionalEnv,
+  parsePort,
+  parseWorkerPollIntervalMs,
+  requireEnv,
+} from "./config.js";
 
 describe("parsePort", () => {
   it("returns 3000 when value is undefined", () => {
@@ -70,16 +76,45 @@ describe("getOptionalEnv", () => {
   });
 });
 
+describe("parseWorkerPollIntervalMs", () => {
+  it("returns 1000 when value is undefined", () => {
+    expect(parseWorkerPollIntervalMs(undefined)).toBe(1000);
+  });
+
+  it("returns 1000 when value is empty string", () => {
+    expect(parseWorkerPollIntervalMs("")).toBe(1000);
+  });
+
+  it("parses valid positive integer", () => {
+    expect(parseWorkerPollIntervalMs("2000")).toBe(2000);
+  });
+
+  it("returns 1000 when value is invalid", () => {
+    expect(parseWorkerPollIntervalMs("invalid")).toBe(1000);
+  });
+
+  it("returns 1000 when value is zero", () => {
+    expect(parseWorkerPollIntervalMs("0")).toBe(1000);
+  });
+
+  it("returns 1000 when value is negative", () => {
+    expect(parseWorkerPollIntervalMs("-500")).toBe(1000);
+  });
+});
+
 describe("config", () => {
-  it("exports config with port, db.url, apiKey, and baseUrl", () => {
+  it("exports config with port, db.url, apiKey, baseUrl, and worker", () => {
     expect(config).toHaveProperty("port");
     expect(config).toHaveProperty("db");
     expect(config).toHaveProperty("apiKey");
     expect(config).toHaveProperty("baseUrl");
+    expect(config).toHaveProperty("worker");
     expect(typeof config.port).toBe("number");
     expect(config.db).toHaveProperty("url");
     expect(typeof config.apiKey).toBe("string");
     expect(typeof config.baseUrl).toBe("string");
     expect(config.baseUrl.length).toBeGreaterThan(0);
+    expect(config.worker).toHaveProperty("pollIntervalMs");
+    expect(typeof config.worker.pollIntervalMs).toBe("number");
   });
 });
