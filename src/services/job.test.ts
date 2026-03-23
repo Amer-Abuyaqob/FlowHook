@@ -1,11 +1,17 @@
 /**
- * Unit tests for job service enqueue behavior.
+ * Unit tests for job service: enqueue and claim.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { enqueueJob } from "./job.js";
+import { claimNextJob, enqueueJob } from "./job.js";
 
-const { mockDb, mockAssertDbConnection, mockInsertJob } = vi.hoisted(() => {
+const {
+  mockDb,
+  mockAssertDbConnection,
+  mockInsertJob,
+  mockClaimNextPendingJob,
+} = vi.hoisted(() => {
   const mockInsertJob = vi.fn();
+  const mockClaimNextPendingJob = vi.fn();
 
   return {
     mockDb: {
@@ -13,6 +19,7 @@ const { mockDb, mockAssertDbConnection, mockInsertJob } = vi.hoisted(() => {
     },
     mockAssertDbConnection: vi.fn(),
     mockInsertJob,
+    mockClaimNextPendingJob,
   };
 });
 
@@ -23,6 +30,7 @@ vi.mock("../db/index.js", () => ({
 
 vi.mock("../db/queries/jobs.js", () => ({
   insertJob: (...args: unknown[]) => mockInsertJob(...args),
+  claimNextPendingJob: (...args: unknown[]) => mockClaimNextPendingJob(...args),
 }));
 
 describe("enqueueJob", () => {
@@ -50,5 +58,40 @@ describe("enqueueJob", () => {
     await expect(enqueueJob("pipeline-uuid-1", { x: 1 })).rejects.toThrow(
       "insertJob: no row returned"
     );
+  });
+});
+
+describe("claimNextJob", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("asserts db connection and returns claimed job", async () => {
+    const jobRow = {
+      id: "job-1",
+      pipelineId: "pipeline-1",
+      status: "processing",
+      payload: { x: 1 },
+      result: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      processingStartedAt: new Date(),
+      processingEndedAt: null,
+    };
+    mockClaimNextPendingJob.mockResolvedValue(jobRow);
+
+    const result = await claimNextJob();
+
+    expect(mockAssertDbConnection).toHaveBeenCalledWith(mockDb);
+    expect(mockClaimNextPendingJob).toHaveBeenCalledWith(mockDb);
+    expect(result).toEqual(jobRow);
+  });
+
+  it("returns null when no pending jobs", async () => {
+    mockClaimNextPendingJob.mockResolvedValue(null);
+
+    const result = await claimNextJob();
+
+    expect(result).toBeNull();
   });
 });
