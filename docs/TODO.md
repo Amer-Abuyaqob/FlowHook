@@ -534,54 +534,54 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.5 Action Dispatcher
 
-- [ ] **Step 1:** Create `src/services/actions/index.ts`
-  - [ ] Add module JSDoc: dispatches to transform, filter, or template by action type
-- [ ] **Step 2:** Define return type: `{ result: unknown } | { filtered: true }`
-- [ ] **Step 3:** Export `runAction(actionType, actionConfig, payload): Promise<...>`
-  - [ ] Switch on `actionType`; call `runTransform`, `runFilter`, or `runTemplate`
-  - [ ] Re-export or import from `./transform.js`, `./filter.js`, `./template.js`
-- [ ] **Step 4:** Add JSDoc with `@param`, `@returns`, `@throws`
+- [x] **Step 1:** Create `src/services/actions/index.ts`
+  - [x] Add module JSDoc: dispatches to transform, filter, or template by action type
+- [x] **Step 2:** Define return type: `{ result: unknown } | { filtered: true }`
+- [x] **Step 3:** Export `runAction(actionType, actionConfig, payload): Promise<...>`
+  - [x] Switch on `actionType`; call `runTransform`, `runFilter`, or `runTemplate`
+  - [x] Re-export or import from `./transform.js`, `./filter.js`, `./template.js`
+- [x] **Step 4:** Add JSDoc with `@param`, `@returns`, `@throws`
 
 ---
 
 ### 2.6 Transform Action (real implementation)
 
-- [ ] **Step 1:** Create `src/services/actions/transform.ts`
-  - [ ] Add module JSDoc: transform action — rename/reshape JSON fields per mappings
-- [ ] **Step 2:** Import `getValueAtPath`, `setValueAtPath` from `../../lib/jsonPath.js`
-- [ ] **Step 3:** Import `TransformActionConfig` from `../../db/types.js`
-- [ ] **Step 4:** Export `runTransform(config: TransformActionConfig, payload: unknown): { result: Record<string, unknown> }`
-  - [ ] Assume config is valid (already validated on pipeline create)
-  - [ ] Create output object `{}`
-  - [ ] For each mapping: `value = getValueAtPath(payload, mapping.from)`
-  - [ ] If `value === undefined` and `!mapping.optional` → throw `Error("Required field missing: ...")`
-  - [ ] If defined or optional: `setValueAtPath(output, mapping.to, value)` (flat `to` only)
-  - [ ] Return `{ result: output }`
-- [ ] **Step 5:** Add JSDoc
-- [ ] **Step 6:** Create `src/services/actions/transform.test.ts`
-  - [ ] Simple rename: `{ from: "a", to: "b" }` + `{ a: 1 }` → `{ result: { b: 1 } }`
-  - [ ] Optional missing: `{ from: "x", to: "y", optional: true }` + `{}` → `{ result: { y: undefined } }` (or omit key — define behavior)
-  - [ ] Required missing: `{ from: "x", to: "y" }` + `{}` → throws
+- [x] **Step 1:** Create `src/services/actions/transform.ts`
+  - [x] Add module JSDoc: transform action — rename/reshape JSON fields per mappings
+- [x] **Step 2:** Import `getValueAtPath`, `setValueAtPath` from `../../lib/jsonPath.js`
+- [x] **Step 3:** Import `TransformActionConfig` from `../../db/types.js`
+- [x] **Step 4:** Export `runTransform(config: TransformActionConfig, payload: unknown): { result: Record<string, unknown> }`
+  - [x] Assume config is valid (already validated on pipeline create)
+  - [x] Create output object `{}`
+  - [x] For each mapping: `value = getValueAtPath(payload, mapping.from)`
+  - [x] If `value === undefined` and `!mapping.optional` → throw `Error("Required field missing: ...")`
+  - [x] If defined or optional: `setValueAtPath(output, mapping.to, value)` (flat `to` only)
+  - [x] Return `{ result: output }`
+- [x] **Step 5:** Add JSDoc
+- [x] **Step 6:** Create `src/services/actions/transform.test.ts`
+  - [x] Simple rename: `{ from: "a", to: "b" }` + `{ a: 1 }` → `{ result: { b: 1 } }`
+  - [x] Optional missing: `{ from: "x", to: "y", optional: true }` + `{}` → `{ result: { y: undefined } }` (or omit key — define behavior)
+  - [x] Required missing: `{ from: "x", to: "y" }` + `{}` → throws
 
 ---
 
 ### 2.7 Filter Action (stub)
 
-- [ ] **Step 1:** Create `src/services/actions/filter.ts`
-  - [ ] Add module JSDoc: filter action stub — not implemented in Phase 2
-- [ ] **Step 2:** Export `runFilter(_config, _payload): never`
-  - [ ] Throw `new Error("Filter action is not implemented")`
-- [ ] **Step 3:** Add JSDoc with `@throws`
+- [x] **Step 1:** Create `src/services/actions/filter.ts`
+  - [x] Add module JSDoc: filter action stub — not implemented in Phase 2
+- [x] **Step 2:** Export `runFilter(_config, _payload): never`
+  - [x] Throw `new Error("Filter action is not implemented")`
+- [x] **Step 3:** Add JSDoc with `@throws`
 
 ---
 
 ### 2.8 Template Action (stub)
 
-- [ ] **Step 1:** Create `src/services/actions/template.ts`
-  - [ ] Add module JSDoc: template action stub — not implemented in Phase 2
-- [ ] **Step 2:** Export `runTemplate(_config, _payload): never`
-  - [ ] Throw `new Error("Template action is not implemented")`
-- [ ] **Step 3:** Add JSDoc with `@throws`
+- [x] **Step 1:** Create `src/services/actions/template.ts`
+  - [x] Add module JSDoc: template action stub — not implemented in Phase 2
+- [x] **Step 2:** Export `runTemplate(_config, _payload): never`
+  - [x] Throw `new Error("Template action is not implemented")`
+- [x] **Step 3:** Add JSDoc with `@throws`
 
 ---
 

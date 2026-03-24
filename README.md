@@ -123,4 +123,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 complete. Phase 2 foundation (2.1–2.4): worker poll config, JSON path helpers, job claim/update queries, `claimNextJob` service. Worker loop and actions still pending. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 complete. Phase 2: worker poll config, JSON path helpers, job claim/update, `claimNextJob`, action dispatcher (`runAction`), transform action (real), filter/template stubs. Worker loop and delivery stub still pending. See [personal/PR.md](personal/PR.md) for PR notes.
