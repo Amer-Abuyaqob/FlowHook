@@ -601,20 +601,20 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.10 Worker Processing Loop
 
-- [ ] **Step 1:** Update `src/worker.ts` — add module JSDoc (worker entry, polls jobs, runs actions)
-- [ ] **Step 2:** Import: `db`, `assertDbConnection`, `config`, `claimNextJob`, `updateJob` (from queries), `getPipelineById`, `getSubscribersByPipelineId`, `runAction`, `deliverToSubscribers`
-- [ ] **Step 3:** Add `sleep(ms: number): Promise<void>` helper (e.g. `return new Promise(r => setTimeout(r, ms))`)
-- [ ] **Step 4:** Implement main loop: `while (true)`
-  - [ ] Call `claimNextJob()`
-  - [ ] If `null` → `await sleep(config.worker.pollIntervalMs)`, continue
-  - [ ] Assert db; fetch pipeline via `getPipelineById(db, job.pipelineId)`
-  - [ ] If pipeline missing → log error, update job `failed`, continue
-  - [ ] Fetch subscribers via `getSubscribersByPipelineId(db, job.pipelineId)`
-  - [ ] Try: `outcome = await runAction(pipeline.actionType, pipeline.actionConfig, job.payload)`
-  - [ ] If `{ filtered: true }` → update job: `status: 'filtered'`, `result: null`, `processingEndedAt: new Date()`
-  - [ ] Else → update job: `status: 'completed'`, `result: outcome.result`, `processingEndedAt: new Date()`; call `deliverToSubscribers(subscribers, outcome.result, job.id)`
-  - [ ] Catch: `const message = e instanceof Error ? e.message : String(e)`; `console.error("Error:", message)`; update job `failed`, `processingEndedAt`
-- [ ] **Step 5:** Ensure worker exits if `db` is undefined (e.g. log and exit with code 1)
+- [x] **Step 1:** Update `src/worker.ts` — add module JSDoc (worker entry, polls jobs, runs actions)
+- [x] **Step 2:** Import: `db`, `assertDbConnection`, `config`, `claimNextJob`, `updateJob` (from queries), `getPipelineById`, `getSubscribersByPipelineId`, `runAction`, `deliverToSubscribers`
+- [x] **Step 3:** Add `sleep(ms: number): Promise<void>` helper (e.g. `return new Promise(r => setTimeout(r, ms))`)
+- [x] **Step 4:** Implement main loop: `while (true)`
+  - [x] Call `claimNextJob()`
+  - [x] If `null` → `await sleep(config.worker.pollIntervalMs)`, continue
+  - [x] Assert db; fetch pipeline via `getPipelineById(db, job.pipelineId)`
+  - [x] If pipeline missing → log error, update job `failed`, continue
+  - [x] Fetch subscribers via `getSubscribersByPipelineId(db, job.pipelineId)`
+  - [x] Try: `outcome = await runAction(pipeline.actionType, pipeline.actionConfig, job.payload)`
+  - [x] If `{ filtered: true }` → update job: `status: 'filtered'`, `result: null`, `processingEndedAt: new Date()`
+  - [x] Else → update job: `status: 'completed'`, `result: outcome.result`, `processingEndedAt: new Date()`; call `deliverToSubscribers(subscribers, outcome.result, job.id)`
+  - [x] Catch: `const message = e instanceof Error ? e.message : String(e)`; `console.error("Error:", message)`; update job `failed`, `processingEndedAt`
+- [x] **Step 5:** Ensure worker exits if `db` is undefined (e.g. log and exit with code 1)
 
 ---
 
