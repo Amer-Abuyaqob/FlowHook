@@ -1,7 +1,7 @@
 /**
  * Unit tests for action dispatcher: runAction.
  */
-import type { ActionType } from "../../db/types.js";
+import type { ActionType, FilterActionConfig } from "../../db/types.js";
 import { describe, expect, it } from "vitest";
 import { runAction } from "./index.js";
 
@@ -13,12 +13,22 @@ describe("runAction", () => {
     expect(outcome).toEqual({ result: { y: 123 } });
   });
 
-  it("filter: throws 'Filter action is not implemented'", async () => {
-    const config = { conditions: [] };
-    const payload = {};
-    await expect(runAction("filter", config, payload)).rejects.toThrow(
-      "Filter action is not implemented"
-    );
+  it("filter: returns { result } when conditions match", async () => {
+    const config: FilterActionConfig = {
+      conditions: [{ path: "event.type", operator: "eq", value: "created" }],
+    };
+    const payload = { event: { type: "created" } };
+    const outcome = await runAction("filter", config, payload);
+    expect(outcome).toEqual({ result: payload });
+  });
+
+  it("filter: returns { filtered: true } when any condition fails", async () => {
+    const config: FilterActionConfig = {
+      conditions: [{ path: "event.type", operator: "eq", value: "created" }],
+    };
+    const payload = { event: { type: "updated" } };
+    const outcome = await runAction("filter", config, payload);
+    expect(outcome).toEqual({ filtered: true });
   });
 
   it("template: throws 'Template action is not implemented'", async () => {
