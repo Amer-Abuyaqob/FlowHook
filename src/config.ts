@@ -38,7 +38,7 @@ export type DeliveryConfig = {
 /**
  * Typed application configuration.
  *
- * @property port - HTTP server port (default 3000).
+ * @property port - HTTP server port (default 8080).
  * @property db - Database config; url is undefined when DATABASE_URL is not set.
  * @property apiKey - API key for authenticated endpoints (required).
  * @property baseUrl - Base URL for webhook endpoints; defaults to http://localhost:PORT when not set.
@@ -55,16 +55,16 @@ export type Config = {
 };
 
 /**
- * Parses PORT from env; returns default 3000 if missing or invalid.
+ * Parses PORT from env; returns default 8080 if missing or invalid.
  *
  * @param value - Raw env value (e.g. process.env.PORT).
  * @returns Parsed port number.
  * @internal Exported for unit testing.
  */
 export function parsePort(value: string | undefined): number {
-  if (value === undefined || value === "") return 3000;
+  if (value === undefined || value === "") return 8080;
   const n = Number.parseInt(value, 10);
-  if (!Number.isFinite(n) || n < 1 || n > 65535) return 3000;
+  if (!Number.isFinite(n) || n < 1 || n > 65535) return 8080;
   return n;
 }
 

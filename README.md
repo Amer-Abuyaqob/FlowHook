@@ -14,7 +14,7 @@ FlowHook is a webhook ingestion and processing pipeline. It receives webhooks, r
 - Webhook ingestion with slug-based routing
 - Action pipeline (transform, filter, template)
 - PostgreSQL with Drizzle ORM
-- JWT/API key auth for protected routes
+- API key auth for protected routes (Bearer or `X-API-Key`)
 
 ## ⚙️ Installation
 
@@ -43,7 +43,7 @@ Configure environment variables (in `.env` — do not commit). Copy from `.env.e
 
 ## 🚀 Quick Start
 
-1. Set `API_KEY` in `.env` (required). Set `DATABASE_URL` for DB features (optional).
+1. Set `API_KEY` in `.env` (required). Set `DATABASE_URL` for DB features (optional). Default HTTP port is **8080** when `PORT` is unset (matches Docker Compose).
 2. Run migrations (if using DB) and build:
 
 ```bash
@@ -94,14 +94,14 @@ See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
 
 ## Tech Stack
 
-| Layer     | Tech                                             |
-| --------- | ------------------------------------------------ |
-| Runtime   | Node.js                                          |
-| Language  | TypeScript                                       |
-| Framework | Express.js                                       |
-| Database  | PostgreSQL                                       |
-| ORM       | Drizzle                                          |
-| Auth      | API key (Bearer, X-API-Key) — JWT/Argon2 planned |
+| Layer     | Tech                          |
+| --------- | ----------------------------- |
+| Runtime   | Node.js                       |
+| Language  | TypeScript                    |
+| Framework | Express.js                    |
+| Database  | PostgreSQL                    |
+| ORM       | Drizzle                       |
+| Auth      | API key (Bearer, `X-API-Key`) |
 
 ## Scripts
 
@@ -124,10 +124,15 @@ npm run db.migrate  # Apply migrations
 - [Project overview](docs/PROJECT_DESC.md) — Architecture, workspace map
 - [API reference](docs/API.md) — Full endpoint docs with schemas
 
+## Architecture
+
+FlowHook runs as two cooperating processes: an Express HTTP API for webhook ingestion and CRUD/job queries, and a long-running worker that claims pending jobs and performs the configured actions (transform/filter/template) before delivering results to subscriber URLs.
+The end-to-end architecture (including the component diagram and data model) lives in [docs/DESIGN_DECISIONS.md](docs/DESIGN_DECISIONS.md).
+
 ## 👏 Contributing
 
 Contributions are welcome! Fork the repo, open a pull request, and ensure tests pass (`npm run test`). Submit PRs to the `main` branch.
 
 ---
 
-**Last Updated:** Phase 5 (Job API) is complete: `GET /api/jobs` and `GET /api/jobs/:id` are implemented with API-key auth, snake_case JSON per `docs/API.md`, list filters and pagination (default limit 50, max 100), newest-first ordering, and delivery history on the detail route. Phase 4 delivery behavior is unchanged (subscriber POST, retries, `delivery_attempts`). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Default HTTP port is **8080** when `PORT` is unset or invalid (matches Docker Compose). API errors are normalized in `src/http/errorMessagePolicy.ts` with inventory in `docs/ERROR_INVENTORY.md`; `docs/API.md` and `/app/` include expanded error-response tables. README clarifies API key auth (Bearer or `X-API-Key`) and links architecture to `docs/DESIGN_DECISIONS.md`. See [personal/PR.md](personal/PR.md) for PR notes.

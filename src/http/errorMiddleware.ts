@@ -13,6 +13,7 @@ import {
   UserNotAuthenticatedError,
 } from "../errors.js";
 import { respondWithError } from "./json.js";
+import { getClientErrorMessage } from "./errorMessagePolicy.js";
 
 /** Maps known HTTP error classes to status codes. */
 const ERROR_STATUS_MAP: ReadonlyMap<new (msg: string) => Error, number> =
@@ -23,9 +24,6 @@ const ERROR_STATUS_MAP: ReadonlyMap<new (msg: string) => Error, number> =
     [NotFoundError, 404],
     [ConflictError, 409],
   ]);
-
-/** Generic message for unexpected errors; avoids leaking internal details. */
-const INTERNAL_ERROR_MESSAGE = "Internal Server Error";
 
 /**
  * Determines the appropriate HTTP status code for a given error.
@@ -50,23 +48,8 @@ function getStatusOfError(err: unknown): number {
  * @param err - Caught error (may be Error or any value).
  * @returns Human-readable message string.
  */
-function getErrorMessage(err: unknown): string {
+function getErrorMessageForLogging(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
-}
-
-/**
- * Extracts the client-facing error message based on error type.
- *
- * For known custom errors, the original message is returned. For all other
- * errors, a generic message is used so that internal details are not exposed.
- *
- * @param err - Error instance thrown by route handlers or middleware.
- * @param status - HTTP status code from getStatusOfError.
- * @returns Message string that is safe to send to clients.
- */
-function getClientErrorMessage(err: unknown, status: number): string {
-  if (err instanceof SyntaxError) return "Invalid JSON";
-  return status >= 500 ? INTERNAL_ERROR_MESSAGE : getErrorMessage(err);
 }
 
 /**
@@ -91,7 +74,7 @@ export function errorMiddleware(
   _next: NextFunction
 ): void {
   const status = getStatusOfError(err);
-  const logMessage = getErrorMessage(err);
+  const logMessage = getErrorMessageForLogging(err);
   const clientMessage = getClientErrorMessage(err, status);
 
   if (status >= 500) {

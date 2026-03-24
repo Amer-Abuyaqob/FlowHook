@@ -1,23 +1,8 @@
 ---
 name: FlowHook Project Design
 overview: "A detailed design plan for FlowHook: architecture, schema, API structure, worker flow, and Docker/CI setup, incorporating all prior decisions (JSON transform + Filter + Template actions, Postgres queue, API keys, slugs, etc.)."
-todos:
-  - id: todo-1773717753178-me4hi40wc
-    content: "New: docs/DESIGN_DECISIONS.md — save this plan + your Q1–Q5 answers."
-    status: completed
-  - id: todo-1773717763147-xs0ig9xl1
-    content: "Update: package.json — rename to FlowHook, add worker script."
-    status: completed
-  - id: todo-1773717779298-7onptpe1w
-    content: "Update: .cursorrules — project focus, FlowHook-specific rules."
-    status: completed
-  - id: todo-1773717802409-6ohtk3y5z
-    content: "Update: .env — add API_KEY, adjust DB_URL."
-    status: completed
-  - id: todo-1773717807354-kpnxj1hcd
-    content: |
-      New: docker-compose.yml, Dockerfile, .github/workflows/ci.yml.
-    status: completed
+lastReviewed: "2026-03-24"
+todos: []
 isProject: false
 ---
 
@@ -258,7 +243,8 @@ src/
 │   ├── schema.ts         # Drizzle schema
 │   └── index.ts          # DB client
 ├── auth/
-│   └── validate.ts       # validateAuth(req) - API key for v1
+│   ├── validate.ts       # validateAuth(req) - API key for v1
+│   └── authMiddleware.ts # Express middleware; 401 on missing/invalid key
 ├── routes/
 │   ├── pipelines.ts
 │   ├── jobs.ts

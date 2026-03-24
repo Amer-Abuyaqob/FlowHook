@@ -49,7 +49,7 @@ function timingSafeEqualStrings(a: string, b: string): boolean {
  * Validates the request against the configured API key.
  *
  * Extracts the credential from Authorization (Bearer) or X-API-Key headers.
- * Returns a resolved Promise for future extensibility (e.g. JWT validation).
+ * Returns a resolved Promise for future extensibility (e.g. other auth strategies).
  *
  * @param req - Express request whose headers are inspected.
  * @returns Promise resolving to valid/identity or valid: false.

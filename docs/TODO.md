@@ -2,7 +2,7 @@
 
 Deeply detailed step-by-step checklist. Work top-to-bottom within each phase. Check off items as you complete them.
 
-**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, pipeline APIs, subscriber routes, and webhook ingestion are done. Worker processing and subscriber delivery are pending.
+**Status:** Phases 1–5 are complete (worker processing, subscriber delivery, and the Job API are implemented). Remaining work is documentation/polish and cleanup.
 
 ---
 
@@ -98,12 +98,12 @@ These are installed via `npm install` when you create the project — no global 
 ### 1.2 Config
 
 - [x] **Create `src/config.ts`**
-  - [x] Read `PORT` from env (default 3000)
+  - [x] Read `PORT` from env (default 8080)
   - [x] Read `DATABASE_URL` from env
   - [x] Read `API_KEY` from env
   - [x] Export typed config object
 - [x] **Create `.env.example`**
-  - [x] `PORT=3000`
+  - [x] `PORT=8080`
   - [x] `DATABASE_URL=postgresql://user:pass@localhost:5432/flowhook`
   - [x] `API_KEY=your-secret-key`
 
@@ -176,7 +176,7 @@ These are installed via `npm install` when you create the project — no global 
   - [x] **Step 5:** In `src/index.ts`, add `import healthRouter from "./routes/health.js";`
   - [x] **Step 6:** Add `app.use("/api", healthRouter);` before `app.listen`.
   - [x] **Step 7:** Keep `app.listen(config.port, ...)`.
-  - [x] **Step 8:** Verify: `curl http://localhost:3000/api/healthz` returns `OK` (plain text).
+  - [x] **Step 8:** Verify: `curl http://localhost:8080/api/healthz` returns `OK` (plain text).
 
 ---
 
@@ -464,8 +464,8 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.0 Branch Setup
 
-- [ ] **Step 1:** Create branch `feat/worker` from `main`
-  - [ ] Run: `git checkout main && git pull && git checkout -b feat/worker`
+- [x] **Step 1:** Create branch `feat/worker` from `main`
+  - [x] Run: `git checkout main && git pull && git checkout -b feat/worker`
 
 ---
 
@@ -741,7 +741,7 @@ These are installed via `npm install` when you create the project — no global 
 
 ## Phase 5: Job API (branch `feat/job-api`)
 
-- [ ] **Create branch:** `git checkout main && git pull && git checkout -b feat/job-api`
+- [x] **Create branch:** `git checkout main && git pull && git checkout -b feat/job-api`
 
 ---
 
