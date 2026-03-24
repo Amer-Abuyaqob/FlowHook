@@ -262,18 +262,17 @@
                 <td>400</td>
                 <td>
                   <code>Invalid request</code>, <code>name is required</code>,
-                  etc.
+                  <code>name must be non-empty</code>,
+                  <code>action_type is required</code>,
+                  <code>action_config is required</code>,
+                  <code>Invalid action_type</code>,
+                  <code>action_type must be a string</code>,
+                  <code>action_config must be an object</code>
                 </td>
               </tr>
               <tr>
                 <td>401</td>
-                <td><code>Authorization header is required</code>, etc.</td>
-              </tr>
-              <tr>
-                <td>409</td>
-                <td>
-                  <code>Slug already in use</code> (if collision after append)
-                </td>
+                <td><code>Unauthorized</code></td>
               </tr>
             </tbody>
           </table>
@@ -317,6 +316,10 @@
               </tr>
               <tr>
                 <td>API key</td>
+                <td>401 – <code>Unauthorized</code></td>
+              </tr>
+              <tr>
+                <td>API key</td>
                 <td>404 – <code>Pipeline not found</code></td>
               </tr>
             </tbody>
@@ -348,11 +351,18 @@
               </tr>
               <tr>
                 <td>400</td>
-                <td><code>Invalid request</code></td>
+                <td>
+                  <code>Invalid request</code>,
+                  <code>name must be a string</code>,
+                  <code>name must be non-empty</code>,
+                  <code>is_active must be a boolean</code>,
+                  <code>action_config must be an object</code>,
+                  <code>Invalid action_type</code>
+                </td>
               </tr>
               <tr>
                 <td>401</td>
-                <td><code>Authorization header is required</code>, etc.</td>
+                <td><code>Unauthorized</code></td>
               </tr>
               <tr>
                 <td>404</td>
@@ -377,6 +387,10 @@
               <tr>
                 <td>API key</td>
                 <td>204 – No Content</td>
+              </tr>
+              <tr>
+                <td>API key</td>
+                <td>401 – <code>Unauthorized</code></td>
               </tr>
               <tr>
                 <td>API key</td>
@@ -450,12 +464,13 @@
               <tr>
                 <td>400</td>
                 <td>
-                  <code>URL is required</code>, <code>Invalid URL format</code>
+                  <code>Invalid request</code>, <code>URL is required</code>,
+                  <code>Invalid URL format</code>
                 </td>
               </tr>
               <tr>
                 <td>401</td>
-                <td><code>Authorization header is required</code>, etc.</td>
+                <td><code>Unauthorized</code></td>
               </tr>
               <tr>
                 <td>404</td>
@@ -483,10 +498,7 @@
               </tr>
               <tr>
                 <td>API key</td>
-                <td>
-                  404 – <code>Pipeline not found</code> or
-                  <code>Subscriber not found</code>
-                </td>
+                <td>404 – <code>Subscriber not found</code></td>
               </tr>
             </tbody>
           </table>
@@ -569,6 +581,28 @@
   }
 ]</code></pre>
 
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Error message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>401</td>
+                <td><code>Unauthorized</code></td>
+              </tr>
+              <tr>
+                <td>400</td>
+                <td>
+                  <code>Invalid pipelineId</code>, <code>Invalid offset</code>,
+                  <code>Invalid limit</code>, <code>Invalid status</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
           <h5>
             <code>GET /api/jobs/:id</code>
             <span class="badge badge--available">Available</span>
@@ -611,6 +645,14 @@
               <tr>
                 <td>200</td>
                 <td>Success</td>
+              </tr>
+              <tr>
+                <td>401</td>
+                <td><code>Unauthorized</code></td>
+              </tr>
+              <tr>
+                <td>400</td>
+                <td><code>Invalid request</code></td>
               </tr>
               <tr>
                 <td>404</td>
