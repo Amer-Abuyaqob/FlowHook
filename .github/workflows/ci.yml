@@ -73,7 +73,7 @@ jobs:
         run: npm run db:migrate
 
       - name: Run integration tests only
-        run: npx vitest --run "src/**/*.integration.test.ts"
+        run: npx vitest --run integration.test.ts
 
   style:
     name: Style
