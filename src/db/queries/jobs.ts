@@ -3,7 +3,7 @@
  *
  * Groups all jobs table queries; used by job service and future worker logic.
  */
-import { asc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import type { DbClient } from "../index.js";
 import { jobs } from "../schema.js";
 import type { JobStatus } from "../types.js";
@@ -21,6 +21,21 @@ export type JobUpdate = {
   result?: unknown;
   processingStartedAt?: Date | null;
   processingEndedAt?: Date | null;
+};
+
+/**
+ * Filters and pagination for listing jobs (GET /api/jobs).
+ *
+ * @property pipelineId - Restrict to this pipeline when set.
+ * @property status - Restrict to this status when set.
+ * @property limit - Maximum rows.
+ * @property offset - Skip this many rows.
+ */
+export type ListJobsParams = {
+  pipelineId?: string;
+  status?: JobStatus;
+  limit: number;
+  offset: number;
 };
 
 /**
@@ -56,6 +71,56 @@ export async function insertJob(db: DbClient, row: JobInsert): Promise<JobRow> {
  * @param updates - Partial job fields to update.
  * @returns The updated job row if found, undefined otherwise.
  */
+/**
+ * Fetches a single job by id.
+ *
+ * @param db - Connected Drizzle client.
+ * @param jobId - Job UUID.
+ * @returns The job row if found, undefined otherwise.
+ */
+export async function getJobById(
+  db: DbClient,
+  jobId: string
+): Promise<JobRow | undefined> {
+  const rows = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
+  return rows.at(0);
+}
+
+/**
+ * Lists jobs with optional filters, newest first.
+ *
+ * @param db - Connected Drizzle client.
+ * @param params - Filter and pagination options.
+ * @returns Matching job rows.
+ */
+export async function listJobs(
+  db: DbClient,
+  params: ListJobsParams
+): Promise<JobRow[]> {
+  const conditions = [];
+  if (params.pipelineId !== undefined) {
+    conditions.push(eq(jobs.pipelineId, params.pipelineId));
+  }
+  if (params.status !== undefined) {
+    conditions.push(eq(jobs.status, params.status));
+  }
+
+  const whereClause =
+    conditions.length === 0
+      ? undefined
+      : conditions.length === 1
+        ? conditions[0]
+        : and(...conditions);
+
+  return db
+    .select()
+    .from(jobs)
+    .where(whereClause ?? sql`true`)
+    .orderBy(desc(jobs.createdAt))
+    .limit(params.limit)
+    .offset(params.offset);
+}
+
 export async function updateJob(
   db: DbClient,
   jobId: string,

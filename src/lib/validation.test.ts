@@ -7,7 +7,9 @@ import {
   assertIsObjectOrNull,
   assertIsRecord,
   assertValidUrl,
+  assertValidUuid,
   getRequiredString,
+  isValidUuid,
 } from "./validation.js";
 
 describe("assertIsRecord", () => {
@@ -81,6 +83,37 @@ describe("getRequiredString", () => {
   it("throws when value is null", () => {
     expect(() => getRequiredString({ name: null }, "name", "Required")).toThrow(
       "Required"
+    );
+  });
+});
+
+describe("isValidUuid", () => {
+  it("returns true for lowercase UUID", () => {
+    expect(isValidUuid("550e8400-e29b-41d4-a716-446655440000")).toBe(true);
+  });
+
+  it("returns true for uppercase UUID", () => {
+    expect(isValidUuid("550E8400-E29B-41D4-A716-446655440000")).toBe(true);
+  });
+
+  it("returns false for invalid string", () => {
+    expect(isValidUuid("not-a-uuid")).toBe(false);
+    expect(isValidUuid("")).toBe(false);
+  });
+});
+
+describe("assertValidUuid", () => {
+  it("returns string when valid", () => {
+    const id = "550e8400-e29b-41d4-a716-446655440000";
+    expect(assertValidUuid(id, "Invalid request")).toBe(id);
+  });
+
+  it("throws with message when invalid", () => {
+    expect(() => assertValidUuid("bad", "Invalid request")).toThrow(
+      BadRequestError
+    );
+    expect(() => assertValidUuid("bad", "Invalid request")).toThrow(
+      "Invalid request"
     );
   });
 });

@@ -1,12 +1,20 @@
 /**
- * Job service: enqueues inbound webhook payloads and claims pending jobs.
+ * Job service: enqueues webhook payloads, claims pending jobs, and queries job state.
  *
- * Worker processing and delivery live in a later phase; this file handles
- * enqueue and claim operations.
+ * Worker processing runs in the worker entry; read APIs support the Job API routes.
  */
-import type { JobRow } from "../db/queries/jobs.js";
+import {
+  listDeliveryAttemptsByJobId,
+  type DeliveryAttemptRow,
+} from "../db/queries/deliveryAttempts.js";
+import type { JobRow, ListJobsParams } from "../db/queries/jobs.js";
 import { assertDbConnection, db } from "../db/index.js";
-import { claimNextPendingJob, insertJob } from "../db/queries/jobs.js";
+import {
+  claimNextPendingJob,
+  getJobById,
+  insertJob,
+  listJobs,
+} from "../db/queries/jobs.js";
 
 /**
  * Enqueues a new job for later processing.
@@ -37,4 +45,36 @@ export async function enqueueJob(
 export async function claimNextJob(): Promise<JobRow | null> {
   assertDbConnection(db);
   return claimNextPendingJob(db);
+}
+
+/**
+ * Loads a job and its delivery attempts, or null if the job does not exist.
+ *
+ * @param jobId - Job UUID.
+ * @returns Job row with attempts, or null when no row matches.
+ */
+export async function getJobWithAttempts(jobId: string): Promise<{
+  job: JobRow;
+  attempts: DeliveryAttemptRow[];
+} | null> {
+  assertDbConnection(db);
+  const job = await getJobById(db, jobId);
+  if (!job) {
+    return null;
+  }
+  const attempts = await listDeliveryAttemptsByJobId(db, jobId);
+  return { job, attempts };
+}
+
+/**
+ * Lists jobs with filters and pagination (newest first at the database layer).
+ *
+ * @param params - Validated list parameters.
+ * @returns Job rows for the current page.
+ */
+export async function listJobsByParams(
+  params: ListJobsParams
+): Promise<JobRow[]> {
+  assertDbConnection(db);
+  return listJobs(db, params);
 }

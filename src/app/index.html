@@ -498,7 +498,7 @@
 
           <h5>
             <code>GET /api/jobs</code>
-            <span class="badge badge--planned">Planned</span>
+            <span class="badge badge--available">Available</span>
           </h5>
           <p>List jobs with optional filters.</p>
           <p><strong>Query parameters:</strong></p>
@@ -536,7 +536,7 @@
                 <td>number</td>
                 <td>No</td>
                 <td>50</td>
-                <td>Max results</td>
+                <td>Max results (default 50; server caps at 100)</td>
               </tr>
               <tr>
                 <td>offset</td>
@@ -571,7 +571,7 @@
 
           <h5>
             <code>GET /api/jobs/:id</code>
-            <span class="badge badge--planned">Planned</span>
+            <span class="badge badge--available">Available</span>
           </h5>
           <p>Get a single job by ID, including delivery attempts.</p>
           <p>
