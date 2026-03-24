@@ -178,6 +178,25 @@ hr {
   color: var(--muted);
 }
 
+/* Brand / logo */
+.brand {
+  margin-bottom: 1.5rem;
+}
+
+.brand-heading {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.brand-logo {
+  display: block;
+  max-width: 900px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
 /* Landing / doc page */
 .tagline {
   font-size: 1.1rem;
