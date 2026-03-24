@@ -587,15 +587,15 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.9 Delivery Stub
 
-- [ ] **Step 1:** Create `src/lib/delivery.ts`
-  - [ ] Add module JSDoc: delivery to subscribers; Phase 2 is no-op stub
-- [ ] **Step 2:** Define `DeliverySigner` interface
-  - [ ] `sign(payload: string): string` — for future HMAC
-  - [ ] Add JSDoc: v1 implementation returns `""`
-- [ ] **Step 3:** Export `deliverToSubscribers(subscribers, result, jobId): Promise<void>`
-  - [ ] Params: `SubscriberRow[]`, `unknown`, `string`
-  - [ ] Body: no-op (do nothing)
-  - [ ] Add JSDoc
+- [x] **Step 1:** Create `src/lib/delivery.ts`
+  - [x] Add module JSDoc: delivery to subscribers; Phase 2 is no-op stub
+- [x] **Step 2:** Define `DeliverySigner` interface
+  - [x] `sign(payload: string): string` — for future HMAC
+  - [x] Add JSDoc: v1 implementation returns `""`
+- [x] **Step 3:** Export `deliverToSubscribers(subscribers, result, jobId): Promise<void>`
+  - [x] Params: `SubscriberRow[]`, `unknown`, `string`
+  - [x] Body: no-op (do nothing)
+  - [x] Add JSDoc
 
 ---
 
