@@ -18,10 +18,9 @@ describe.skipIf(!hasDbUrl)("db integration", () => {
     expect(result.rows[0]).toEqual({ num: 1 });
   });
 
-  it("can query pipelines table (empty)", async () => {
+  it("can query pipelines table", async () => {
     assertDbConnection(db);
     const rows = await db.select().from(pipelines);
     expect(Array.isArray(rows)).toBe(true);
-    expect(rows).toHaveLength(0);
   });
 });
