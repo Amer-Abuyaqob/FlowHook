@@ -98,12 +98,12 @@ These are installed via `npm install` when you create the project — no global 
 ### 1.2 Config
 
 - [x] **Create `src/config.ts`**
-  - [x] Read `PORT` from env (default 3000)
+  - [x] Read `PORT` from env (default 8080)
   - [x] Read `DATABASE_URL` from env
   - [x] Read `API_KEY` from env
   - [x] Export typed config object
 - [x] **Create `.env.example`**
-  - [x] `PORT=3000`
+  - [x] `PORT=8080`
   - [x] `DATABASE_URL=postgresql://user:pass@localhost:5432/flowhook`
   - [x] `API_KEY=your-secret-key`
 
@@ -176,7 +176,7 @@ These are installed via `npm install` when you create the project — no global 
   - [x] **Step 5:** In `src/index.ts`, add `import healthRouter from "./routes/health.js";`
   - [x] **Step 6:** Add `app.use("/api", healthRouter);` before `app.listen`.
   - [x] **Step 7:** Keep `app.listen(config.port, ...)`.
-  - [x] **Step 8:** Verify: `curl http://localhost:3000/api/healthz` returns `OK` (plain text).
+  - [x] **Step 8:** Verify: `curl http://localhost:8080/api/healthz` returns `OK` (plain text).
 
 ---
 
