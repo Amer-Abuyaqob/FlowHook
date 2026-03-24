@@ -243,7 +243,8 @@ src/
 │   ├── schema.ts         # Drizzle schema
 │   └── index.ts          # DB client
 ├── auth/
-│   └── validate.ts       # validateAuth(req) - API key for v1
+│   ├── validate.ts       # validateAuth(req) - API key for v1
+│   └── authMiddleware.ts # Express middleware; 401 on missing/invalid key
 ├── routes/
 │   ├── pipelines.ts
 │   ├── jobs.ts
