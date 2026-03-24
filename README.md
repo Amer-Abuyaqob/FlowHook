@@ -125,4 +125,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 complete. Phase 2: worker poll config, JSON path helpers, job claim/update, `claimNextJob`, action dispatcher (`runAction`), transform action (real), filter/template stubs, delivery stub (`deliverToSubscribers`, `DeliverySigner`), **worker processing loop** (`processOneJob`, `runWorkerLoop` in `src/services/worker.ts`). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 complete. Phase 2: worker poll config, JSON path helpers, job claim/update, `claimNextJob`, action dispatcher (`runAction`), transform action (real), filter/template stubs, delivery stub (`deliverToSubscribers`, `DeliverySigner`), and **worker processing loop** (`processOneJob`, `runWorkerLoop` in `src/services/worker.ts`) are implemented. Test reliability was improved by excluding `dist/**` from Vitest discovery and reducing integration-test DB races (`fileParallelism: false`). See [personal/PR.md](personal/PR.md) for PR notes.

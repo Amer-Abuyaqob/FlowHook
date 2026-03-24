@@ -620,24 +620,24 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.11 Integration Test
 
-- [ ] **Step 1:** Create `src/worker.integration.test.ts`
-  - [ ] Use `describe.skipIf(!hasDbUrl || !hasApiKey)` pattern (match webhooks test)
-- [ ] **Step 2:** Test: create pipeline with transform, enqueue job, run worker once, verify job completed
-  - [ ] Create pipeline via API (transform, mappings `[{ from: "x", to: "y" }]`)
-  - [ ] POST to webhook with `{ x: 123 }`
-  - [ ] Call worker processing logic (or spawn worker process and poll — prefer invoking processing function if exported)
-  - [ ] Query jobs table: status `completed`, result `{ y: 123 }`
-- [ ] **Step 3:** If worker loop is not easily testable in-process, document manual verification step as fallback
+- [x] **Step 1:** Create `src/worker.integration.test.ts`
+  - [x] Use `describe.skipIf(!hasDbUrl || !hasApiKey)` pattern (match webhooks test)
+- [x] **Step 2:** Test: create pipeline with transform, enqueue job, run worker once, verify job completed
+  - [x] Create pipeline via API (transform, mappings `[{ from: "x", to: "y" }]`)
+  - [x] POST to webhook with `{ x: 123 }`
+  - [x] Call worker processing logic (or spawn worker process and poll — prefer invoking processing function if exported)
+  - [x] Query jobs table: status `completed`, result `{ y: 123 }`
+- [x] **Step 3:** If worker loop is not easily testable in-process, document manual verification step as fallback
 
 ---
 
 ### Phase 2 Complete When
 
-- [ ] **Step 1:** Worker processes transform jobs end-to-end (result stored, status `completed`)
-- [ ] **Step 2:** Filter and template throw when used (acceptable for Phase 2)
-- [ ] **Step 3:** All unit and integration tests pass
-- [ ] **Step 4:** `npm run build` succeeds
-- [ ] **Step 5:** Merge `feat/worker` into `main`
+- [x] **Step 1:** Worker processes transform jobs end-to-end (result stored, status `completed`)
+- [x] **Step 2:** Filter and template throw when used (acceptable for Phase 2)
+- [x] **Step 3:** All unit and integration tests pass
+- [x] **Step 4:** `npm run build` succeeds
+- [x] **Step 5:** Merge `feat/worker` into `main`
 
 ---
 
