@@ -1,10 +1,39 @@
 /**
  * Generic request validation helpers.
  *
- * Reusable assertion and extraction utilities for validating API request bodies.
- * All helpers throw BadRequestError with caller-supplied messages.
+ * Reusable assertion and extraction utilities for validating API request bodies
+ * and other inputs (URLs, UUIDs). All helpers throw BadRequestError with caller-supplied messages.
  */
 import { BadRequestError } from "../errors.js";
+
+/** Lowercase UUID string pattern (matches Postgres textual UUID form). */
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Returns true when the string matches a canonical UUID format.
+ *
+ * @param value - String to test.
+ * @returns Whether value looks like a UUID.
+ */
+export function isValidUuid(value: string): boolean {
+  return UUID_REGEX.test(value);
+}
+
+/**
+ * Asserts that the string is a well-formed UUID (RFC-style hex segments).
+ *
+ * @param value - String to validate.
+ * @param message - Error message when invalid.
+ * @returns The same string.
+ * @throws {BadRequestError} When value is not a UUID string.
+ */
+export function assertValidUuid(value: string, message: string): string {
+  if (!isValidUuid(value)) {
+    throw new BadRequestError(message);
+  }
+  return value;
+}
 
 /**
  * Asserts that value is a plain object (excludes null, arrays, primitives).
