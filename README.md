@@ -103,7 +103,9 @@ See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
 ```bash
 npm run build       # Compile TypeScript and copy src/app → dist/client
 npm start           # Run production server
-npm run dev         # Build and run
+npm run worker      # Run background worker (polls jobs, runs actions)
+npm run dev         # Build and run API
+npm run dev:worker  # Run worker with hot reload
 npm run test        # Run Vitest
 npm run lint        # Run ESLint
 npm run format:check # Check formatting with Prettier
@@ -123,4 +125,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 complete. Phase 2: worker poll config, JSON path helpers, job claim/update, `claimNextJob`, action dispatcher (`runAction`), transform action (real), filter/template stubs, delivery stub (`deliverToSubscribers`, `DeliverySigner`). Worker processing loop still pending. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 complete. Phase 2: worker poll config, JSON path helpers, job claim/update, `claimNextJob`, action dispatcher (`runAction`), transform action (real), filter/template stubs, delivery stub (`deliverToSubscribers`, `DeliverySigner`), **worker processing loop** (`processOneJob`, `runWorkerLoop` in `src/services/worker.ts`). See [personal/PR.md](personal/PR.md) for PR notes.
