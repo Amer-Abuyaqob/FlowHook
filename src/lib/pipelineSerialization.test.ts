@@ -22,7 +22,7 @@ function fakeRow(overrides: Partial<PipelineRow> = {}): PipelineRow {
 describe("toApiPipeline", () => {
   it("maps camelCase row to snake_case API response with webhookUrl", () => {
     const row = fakeRow();
-    const result = toApiPipeline(row, "http://localhost:3000");
+    const result = toApiPipeline(row, "http://localhost:8080");
 
     expect(result).toEqual({
       id: "550e8400-e29b-41d4-a716-446655440000",
@@ -33,7 +33,7 @@ describe("toApiPipeline", () => {
       is_active: true,
       created_at: "2025-03-14T12:00:00.000Z",
       updated_at: "2025-03-14T12:00:00.000Z",
-      webhookUrl: "http://localhost:3000/webhooks/my-stripe-orders",
+      webhookUrl: "http://localhost:8080/webhooks/my-stripe-orders",
     });
   });
 
@@ -46,14 +46,14 @@ describe("toApiPipeline", () => {
 
   it("uses null for action_config when row has null", () => {
     const row = fakeRow({ actionConfig: null });
-    const result = toApiPipeline(row, "http://localhost:3000");
+    const result = toApiPipeline(row, "http://localhost:8080");
 
     expect(result.action_config).toBeNull();
   });
 
   it("handles is_active false", () => {
     const row = fakeRow({ isActive: false });
-    const result = toApiPipeline(row, "http://localhost:3000");
+    const result = toApiPipeline(row, "http://localhost:8080");
 
     expect(result.is_active).toBe(false);
   });
