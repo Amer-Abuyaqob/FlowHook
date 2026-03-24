@@ -12,28 +12,28 @@ import {
 } from "./config.js";
 
 describe("parsePort", () => {
-  it("returns 3000 when value is undefined", () => {
-    expect(parsePort(undefined)).toBe(3000);
+  it("returns 8080 when value is undefined", () => {
+    expect(parsePort(undefined)).toBe(8080);
   });
 
-  it("returns 3000 when value is empty string", () => {
-    expect(parsePort("")).toBe(3000);
+  it("returns 8080 when value is empty string", () => {
+    expect(parsePort("")).toBe(8080);
   });
 
   it("parses valid port number", () => {
     expect(parsePort("8080")).toBe(8080);
   });
 
-  it("returns 3000 when value is invalid", () => {
-    expect(parsePort("invalid")).toBe(3000);
+  it("returns 8080 when value is invalid", () => {
+    expect(parsePort("invalid")).toBe(8080);
   });
 
-  it("returns 3000 when port is out of range (0)", () => {
-    expect(parsePort("0")).toBe(3000);
+  it("returns 8080 when port is out of range (0)", () => {
+    expect(parsePort("0")).toBe(8080);
   });
 
-  it("returns 3000 when port is out of range (>65535)", () => {
-    expect(parsePort("70000")).toBe(3000);
+  it("returns 8080 when port is out of range (>65535)", () => {
+    expect(parsePort("70000")).toBe(8080);
   });
 });
 
