@@ -675,28 +675,28 @@ These are installed via `npm install` when you create the project — no global 
 
 ## Phase 3b: Template Action (branch `feat/template`)
 
-- [ ] **Create branch:** `git checkout main && git pull && git checkout -b feat/template`
+- [x] **Create branch:** `git checkout main && git pull && git checkout -b feat/template`
 
 ---
 
 ### 3b.1 Implement Template
 
-- [ ] **Implement `src/services/actions/template.ts`**
-  - [ ] Parse `action_config.template` — string with `{{path}}` placeholders
-  - [ ] Replace each `{{x.y.z}}` with value from payload at path
-  - [ ] Use mustache lib or custom regex
-  - [ ] Return `{ result: { text: renderedString } }` or similar (design: template produces a string; store as `{ text: "..." }`)
-- [ ] **Unit tests**
-  - [ ] Simple `{{name}}` replacement
-  - [ ] Nested `{{user.email}}`
-  - [ ] Missing path → empty string or error (define behavior)
+- [x] **Implement `src/services/actions/template.ts`**
+  - [x] Parse `action_config.template` — string with `{{path}}` placeholders
+  - [x] Replace each `{{x.y.z}}` with value from payload at path
+  - [x] Use mustache lib or custom regex
+  - [x] Return `{ result: { text: renderedString } }` or similar (design: template produces a string; store as `{ text: "..." }`)
+- [x] **Unit tests**
+  - [x] Simple `{{name}}` replacement
+  - [x] Nested `{{user.email}}`
+  - [x] Missing path → empty string or error (define behavior)
 
 ---
 
 ### Phase 3b Complete When
 
-- [ ] Template action works
-- [ ] Merge `feat/template` into `main`
+- [x] Template action works
+- [x] Merge `feat/template` into `main`
 
 ---
 
