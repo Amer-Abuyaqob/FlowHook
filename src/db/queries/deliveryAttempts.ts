@@ -3,6 +3,7 @@
  *
  * Persists per-subscriber attempt history for job delivery retries.
  */
+import { asc, eq } from "drizzle-orm";
 import type { DbClient } from "../index.js";
 import { deliveryAttempts } from "../schema.js";
 
@@ -46,4 +47,25 @@ export async function insertDeliveryAttempt(
   }
 
   return inserted;
+}
+
+/**
+ * Returns all delivery attempts for a job, ordered by time then attempt number.
+ *
+ * @param db - Connected Drizzle client.
+ * @param jobId - Job UUID.
+ * @returns Attempt rows for that job.
+ */
+export async function listDeliveryAttemptsByJobId(
+  db: DbClient,
+  jobId: string
+): Promise<DeliveryAttemptRow[]> {
+  return db
+    .select()
+    .from(deliveryAttempts)
+    .where(eq(deliveryAttempts.jobId, jobId))
+    .orderBy(
+      asc(deliveryAttempts.createdAt),
+      asc(deliveryAttempts.attemptNumber)
+    );
 }
