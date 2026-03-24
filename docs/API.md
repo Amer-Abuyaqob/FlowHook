@@ -24,7 +24,7 @@ RESTful JSON API for the FlowHook webhook pipeline service. All API endpoints us
 http://localhost:{PORT}
 ```
 
-Replace `{PORT}` with your configured port (default: `3000`).
+Replace `{PORT}` with your configured port (default: `8080`).
 
 ---
 
@@ -131,7 +131,7 @@ Create a new pipeline. Returns the full pipeline including `slug` and `webhookUr
   "is_active": true,
   "created_at": "2025-03-14T12:00:00.000Z",
   "updated_at": "2025-03-14T12:00:00.000Z",
-  "webhookUrl": "http://localhost:3000/webhooks/my-stripe-orders"
+  "webhookUrl": "http://localhost:8080/webhooks/my-stripe-orders"
 }
 ```
 
