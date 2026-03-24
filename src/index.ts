@@ -10,6 +10,7 @@ import express from "express";
 import { config } from "./config.js";
 import { errorMiddleware } from "./http/errorMiddleware.js";
 import healthRouter from "./routes/health.js";
+import jobsRouter from "./routes/jobs.js";
 import pipelinesRouter from "./routes/pipelines.js";
 import webhooksRouter from "./routes/webhooks.js";
 
@@ -85,6 +86,7 @@ export function createApp(): express.Express {
 function registerApiRoutes(app: express.Express): void {
   app.use(API_PREFIX, healthRouter);
   app.use(API_PREFIX, pipelinesRouter);
+  app.use(API_PREFIX, jobsRouter);
   app.use("/webhooks", webhooksRouter);
 }
 
