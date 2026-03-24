@@ -135,4 +135,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 5 (Job API) is complete: `GET /api/jobs` and `GET /api/jobs/:id` are implemented with API-key auth, snake_case JSON per `docs/API.md`, list filters and pagination (default limit 50, max 100), newest-first ordering, and delivery history on the detail route. Phase 4 delivery behavior is unchanged (subscriber POST, retries, `delivery_attempts`). See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Default HTTP port is **8080** when `PORT` is unset or invalid (matches Docker Compose). API errors are normalized in `src/http/errorMessagePolicy.ts` with inventory in `docs/ERROR_INVENTORY.md`; `docs/API.md` and `/app/` include expanded error-response tables. README clarifies API key auth (Bearer or `X-API-Key`) and links architecture to `docs/DESIGN_DECISIONS.md`. See [personal/PR.md](personal/PR.md) for PR notes.
