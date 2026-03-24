@@ -66,13 +66,14 @@ describe("errorMiddleware", () => {
   });
 
   it("maps UserForbiddenError to 403", () => {
-    const { res } = mockRes();
+    const { res, send } = mockRes();
     const req = {} as Request;
     const next = vi.fn();
 
     errorMiddleware(new UserForbiddenError("not allowed"), req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(403);
+    expect(send).toHaveBeenCalledWith(JSON.stringify({ error: "Forbidden" }));
   });
 
   it("maps NotFoundError to 404", () => {
