@@ -14,7 +14,7 @@ FlowHook is a webhook ingestion and processing pipeline. It receives webhooks, r
 - Webhook ingestion with slug-based routing
 - Action pipeline (transform, filter, template)
 - PostgreSQL with Drizzle ORM
-- JWT/API key auth for protected routes
+- API key auth for protected routes (Bearer or `X-API-Key`)
 
 ## ⚙️ Installation
 
@@ -43,7 +43,7 @@ Configure environment variables (in `.env` — do not commit). Copy from `.env.e
 
 ## 🚀 Quick Start
 
-1. Set `API_KEY` in `.env` (required). Set `DATABASE_URL` for DB features (optional).
+1. Set `API_KEY` in `.env` (required). Set `DATABASE_URL` for DB features (optional). Default HTTP port is **8080** when `PORT` is unset (matches Docker Compose).
 2. Run migrations (if using DB) and build:
 
 ```bash
@@ -94,14 +94,14 @@ See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
 
 ## Tech Stack
 
-| Layer     | Tech                                             |
-| --------- | ------------------------------------------------ |
-| Runtime   | Node.js                                          |
-| Language  | TypeScript                                       |
-| Framework | Express.js                                       |
-| Database  | PostgreSQL                                       |
-| ORM       | Drizzle                                          |
-| Auth      | API key (Bearer, X-API-Key) — JWT/Argon2 planned |
+| Layer     | Tech                          |
+| --------- | ----------------------------- |
+| Runtime   | Node.js                       |
+| Language  | TypeScript                    |
+| Framework | Express.js                    |
+| Database  | PostgreSQL                    |
+| ORM       | Drizzle                       |
+| Auth      | API key (Bearer, `X-API-Key`) |
 
 ## Scripts
 
