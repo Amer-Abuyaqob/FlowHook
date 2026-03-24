@@ -2,7 +2,7 @@
 
 Deeply detailed step-by-step checklist. Work top-to-bottom within each phase. Check off items as you complete them.
 
-**Status:** Phase 1 partially complete. Project init, config, DB schema, basic health, auth middleware, error middleware, Docker, CI/CD, pipeline APIs, subscriber routes, and webhook ingestion are done. Worker processing and subscriber delivery are pending.
+**Status:** Phases 1–5 are complete (worker processing, subscriber delivery, and the Job API are implemented). Remaining work is documentation/polish and cleanup.
 
 ---
 
@@ -464,8 +464,8 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 2.0 Branch Setup
 
-- [ ] **Step 1:** Create branch `feat/worker` from `main`
-  - [ ] Run: `git checkout main && git pull && git checkout -b feat/worker`
+- [x] **Step 1:** Create branch `feat/worker` from `main`
+  - [x] Run: `git checkout main && git pull && git checkout -b feat/worker`
 
 ---
 
@@ -741,7 +741,7 @@ These are installed via `npm install` when you create the project — no global 
 
 ## Phase 5: Job API (branch `feat/job-api`)
 
-- [ ] **Create branch:** `git checkout main && git pull && git checkout -b feat/job-api`
+- [x] **Create branch:** `git checkout main && git pull && git checkout -b feat/job-api`
 
 ---
 
