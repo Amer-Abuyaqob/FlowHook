@@ -271,7 +271,7 @@ List jobs with optional filters.
 | ---------- | ------ | -------- | ------- | ---------------------------------------------------------- |
 | pipelineId | string | No       | —       | Filter by pipeline UUID                                    |
 | status     | string | No       | —       | `pending`, `processing`, `completed`, `filtered`, `failed` |
-| limit      | number | No       | 50      | Max results                                                |
+| limit      | number | No       | 50      | Max results (capped at 100)                                |
 | offset     | number | No       | 0       | Pagination offset                                          |
 
 **Example:** `GET /api/jobs?pipelineId=550e8400-e29b-41d4-a716-446655440000&status=completed&limit=10`
