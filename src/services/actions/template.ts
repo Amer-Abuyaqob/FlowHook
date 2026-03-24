@@ -1,21 +1,50 @@
 /**
- * Template action stub — not implemented in Phase 2.
+ * Template action implementation for rendering payload data into text.
  *
- * Will render strings with {{path}} placeholders; Phase 2 throws on any call.
+ * Replaces {{path.to.value}} placeholders using dot-notation lookup.
  */
 import type { TemplateActionConfig } from "../../db/types.js";
+import { getValueAtPath } from "../../lib/jsonPath.js";
+
+const PLACEHOLDER_REGEX = /\{\{\s*([^{}]+?)\s*\}\}/g;
 
 /**
- * Template action runner (stub). Throws when called.
+ * Converts a placeholder value to a safe output string.
  *
- * @param _config - Template action config (unused in Phase 2).
- * @param _payload - Inbound payload (unused in Phase 2).
- * @returns never
- * @throws {Error} Always — "Template action is not implemented"
+ * @param value - Placeholder value resolved from payload.
+ * @returns Render-safe string representation.
+ */
+function formatTemplateValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return String(value);
+}
+
+/**
+ * Renders a template string using payload placeholders.
+ *
+ * @param config - Template action config with a template string.
+ * @param payload - Inbound webhook payload.
+ * @returns Object containing rendered body text.
  */
 export function runTemplate(
-  _config: TemplateActionConfig,
-  _payload: unknown
-): never {
-  throw new Error("Template action is not implemented");
+  config: TemplateActionConfig,
+  payload: unknown
+): { result: { body: string } } {
+  const renderedBody = config.template.replace(
+    PLACEHOLDER_REGEX,
+    (_match, rawPath: string) => {
+      const path = rawPath.trim();
+      const value = getValueAtPath(payload, path);
+      return formatTemplateValue(value);
+    }
+  );
+
+  return { result: { body: renderedBody } };
 }
