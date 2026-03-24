@@ -30,12 +30,13 @@ npm install
 
 Configure environment variables (in `.env` — do not commit). Copy from `.env.example` if available:
 
-| Variable       | Purpose                                                      |
-| -------------- | ------------------------------------------------------------ |
-| `API_KEY`      | API key for protected routes (required)                      |
-| `DATABASE_URL` | PostgreSQL connection string (required for CRUD)             |
-| `BASE_URL`     | Base URL for webhook URLs (default: `http://localhost:PORT`) |
-| `PORT`         | HTTP server port (default 8080)                              |
+| Variable                  | Purpose                                                      |
+| ------------------------- | ------------------------------------------------------------ |
+| `API_KEY`                 | API key for protected routes (required)                      |
+| `DATABASE_URL`            | PostgreSQL connection string (required for CRUD)             |
+| `BASE_URL`                | Base URL for webhook URLs (default: `http://localhost:PORT`) |
+| `PORT`                    | HTTP server port (default 8080)                              |
+| `WORKER_POLL_INTERVAL_MS` | Worker poll interval in ms (default 1000)                    |
 
 ## 🚀 Quick Start
 
@@ -122,4 +123,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 complete. Docker entrypoint runs migrations automatically on `docker compose up`; no manual migration step needed. Create pipeline → add subscriber → POST webhook → job enqueued. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 complete. Phase 2 foundation (2.1–2.4): worker poll config, JSON path helpers, job claim/update queries, `claimNextJob` service. Worker loop and actions still pending. See [personal/PR.md](personal/PR.md) for PR notes.
