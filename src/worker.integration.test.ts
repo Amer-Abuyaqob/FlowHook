@@ -47,7 +47,9 @@ describe.skipIf(!hasDbUrl || !hasApiKey)("worker integration", () => {
       .send({
         name: "Worker Filter Integration Pipeline",
         action_type: "filter",
-        action_config: { conditions: [{ path: "x", operator: "exists" }] },
+        action_config: {
+          conditions: [{ path: "event.type", operator: "eq", value: "keep" }],
+        },
       })
       .expect(201);
 
@@ -77,12 +79,12 @@ describe.skipIf(!hasDbUrl || !hasApiKey)("worker integration", () => {
     expect(rows[0].processingEndedAt).toBeTruthy();
   });
 
-  it("processOneJob marks filter jobs as failed while filter action is a stub", async () => {
+  it("processOneJob marks filter jobs as completed when conditions match", async () => {
     const { slug } = await createFilterPipeline();
 
     const enqueueRes = await request(createApp())
       .post(`/webhooks/${slug}`)
-      .send({ x: 1 })
+      .send({ event: { type: "keep" } })
       .expect(202);
 
     const jobId = enqueueRes.body.jobId as string;
@@ -94,7 +96,31 @@ describe.skipIf(!hasDbUrl || !hasApiKey)("worker integration", () => {
     assertDbConnection(db);
     const rows = await db.select().from(jobs).where(eq(jobs.id, jobId));
     expect(rows).toHaveLength(1);
-    expect(rows[0].status).toBe("failed");
+    expect(rows[0].status).toBe("completed");
+    expect(rows[0].result).toEqual({ event: { type: "keep" } });
+    expect(rows[0].processingStartedAt).toBeTruthy();
+    expect(rows[0].processingEndedAt).toBeTruthy();
+  });
+
+  it("processOneJob marks filter jobs as filtered when any condition fails", async () => {
+    const { slug } = await createFilterPipeline();
+
+    const enqueueRes = await request(createApp())
+      .post(`/webhooks/${slug}`)
+      .send({ event: { type: "drop" } })
+      .expect(202);
+
+    const jobId = enqueueRes.body.jobId as string;
+    expect(jobId).toBeTruthy();
+
+    const processed = await processOneJob();
+    expect(processed).toBe(true);
+
+    assertDbConnection(db);
+    const rows = await db.select().from(jobs).where(eq(jobs.id, jobId));
+    expect(rows).toHaveLength(1);
+    expect(rows[0].status).toBe("filtered");
+    expect(rows[0].result).toBeNull();
     expect(rows[0].processingStartedAt).toBeTruthy();
     expect(rows[0].processingEndedAt).toBeTruthy();
   });
