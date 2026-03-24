@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from "vitest";
 import { validateAuth } from "./validate.js";
 
 vi.mock("../config.js", () => ({
-  config: { apiKey: "test-key", port: 3000, db: { url: undefined } },
+  config: { apiKey: "test-key", port: 8080, db: { url: undefined } },
 }));
 
 function mockRequest(headers: Record<string, string | undefined>): Request {
