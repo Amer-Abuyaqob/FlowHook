@@ -124,6 +124,11 @@ npm run db.migrate  # Apply migrations
 - [Project overview](docs/PROJECT_DESC.md) — Architecture, workspace map
 - [API reference](docs/API.md) — Full endpoint docs with schemas
 
+## Architecture
+
+FlowHook runs as two cooperating processes: an Express HTTP API for webhook ingestion and CRUD/job queries, and a long-running worker that claims pending jobs and performs the configured actions (transform/filter/template) before delivering results to subscriber URLs.
+The end-to-end architecture (including the component diagram and data model) lives in [docs/DESIGN_DECISIONS.md](docs/DESIGN_DECISIONS.md).
+
 ## 👏 Contributing
 
 Contributions are welcome! Fork the repo, open a pull request, and ensure tests pass (`npm run test`). Submit PRs to the `main` branch.
