@@ -6,6 +6,7 @@ import {
   config,
   getOptionalEnv,
   parsePort,
+  parsePositiveIntOrDefault,
   parseWorkerPollIntervalMs,
   requireEnv,
 } from "./config.js";
@@ -102,13 +103,36 @@ describe("parseWorkerPollIntervalMs", () => {
   });
 });
 
+describe("parsePositiveIntOrDefault", () => {
+  it("returns default when value is undefined", () => {
+    expect(parsePositiveIntOrDefault(undefined, 7)).toBe(7);
+  });
+
+  it("returns default when value is empty", () => {
+    expect(parsePositiveIntOrDefault("", 7)).toBe(7);
+  });
+
+  it("parses a valid positive integer", () => {
+    expect(parsePositiveIntOrDefault("12", 7)).toBe(12);
+  });
+
+  it("returns default when value is invalid", () => {
+    expect(parsePositiveIntOrDefault("abc", 7)).toBe(7);
+  });
+
+  it("returns default when value is zero", () => {
+    expect(parsePositiveIntOrDefault("0", 7)).toBe(7);
+  });
+});
+
 describe("config", () => {
-  it("exports config with port, db.url, apiKey, baseUrl, and worker", () => {
+  it("exports config with port, db.url, apiKey, baseUrl, worker, and delivery", () => {
     expect(config).toHaveProperty("port");
     expect(config).toHaveProperty("db");
     expect(config).toHaveProperty("apiKey");
     expect(config).toHaveProperty("baseUrl");
     expect(config).toHaveProperty("worker");
+    expect(config).toHaveProperty("delivery");
     expect(typeof config.port).toBe("number");
     expect(config.db).toHaveProperty("url");
     expect(typeof config.apiKey).toBe("string");
@@ -116,5 +140,11 @@ describe("config", () => {
     expect(config.baseUrl.length).toBeGreaterThan(0);
     expect(config.worker).toHaveProperty("pollIntervalMs");
     expect(typeof config.worker.pollIntervalMs).toBe("number");
+    expect(config.delivery).toHaveProperty("maxAttempts");
+    expect(config.delivery).toHaveProperty("baseDelayMs");
+    expect(config.delivery).toHaveProperty("requestTimeoutMs");
+    expect(typeof config.delivery.maxAttempts).toBe("number");
+    expect(typeof config.delivery.baseDelayMs).toBe("number");
+    expect(typeof config.delivery.requestTimeoutMs).toBe("number");
   });
 });
