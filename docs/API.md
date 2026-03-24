@@ -135,12 +135,11 @@ Create a new pipeline. Returns the full pipeline including `slug` and `webhookUr
 }
 ```
 
-| Status | Error message                                     |
-| ------ | ------------------------------------------------- |
-| 201    | Created                                           |
-| 400    | `Invalid request`, `name is required`, etc.       |
-| 401    | `Authorization header is required`, etc.          |
-| 409    | `Slug already in use` (if collision after append) |
+| Status | Error message                                                                                                                                                                                                     |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 201    | Created                                                                                                                                                                                                           |
+| 400    | `Invalid request`, `name is required`, `name must be non-empty`, `action_type is required`, `action_config is required`, `Invalid action_type`, `action_type must be a string`, `action_config must be an object` |
+| 401    | `Unauthorized`                                                                                                                                                                                                    |
 
 ---
 
@@ -161,6 +160,7 @@ Get a single pipeline by ID.
 | Auth    | Response                   |
 | ------- | -------------------------- |
 | API key | 200 – Pipeline object      |
+| API key | 401 – `Unauthorized`       |
 | API key | 404 – `Pipeline not found` |
 
 ---
@@ -180,12 +180,12 @@ Update a pipeline. All fields are optional (partial update).
 }
 ```
 
-| Status | Error message                            |
-| ------ | ---------------------------------------- |
-| 200    | Success (returns updated pipeline)       |
-| 400    | `Invalid request`                        |
-| 401    | `Authorization header is required`, etc. |
-| 404    | `Pipeline not found`                     |
+| Status | Error message                                                                                                                                                 |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 200    | Success (returns updated pipeline)                                                                                                                            |
+| 400    | `Invalid request`, `name must be a string`, `name must be non-empty`, `is_active must be a boolean`, `action_config must be an object`, `Invalid action_type` |
+| 401    | `Unauthorized`                                                                                                                                                |
+| 404    | `Pipeline not found`                                                                                                                                          |
 
 ---
 
@@ -196,6 +196,7 @@ Delete a pipeline. Cascades to subscribers and related jobs.
 | Auth    | Response                   |
 | ------- | -------------------------- |
 | API key | 204 – No Content           |
+| API key | 401 – `Unauthorized`       |
 | API key | 404 – `Pipeline not found` |
 
 ---
@@ -237,12 +238,12 @@ Add a subscriber (destination URL) to a pipeline.
 }
 ```
 
-| Status | Error message                            |
-| ------ | ---------------------------------------- |
-| 201    | Created                                  |
-| 400    | `URL is required`, `Invalid URL format`  |
-| 401    | `Authorization header is required`, etc. |
-| 404    | `Pipeline not found`                     |
+| Status | Error message                                              |
+| ------ | ---------------------------------------------------------- |
+| 201    | Created                                                    |
+| 400    | `Invalid request`, `URL is required`, `Invalid URL format` |
+| 401    | `Unauthorized`                                             |
+| 404    | `Pipeline not found`                                       |
 
 ---
 
@@ -250,10 +251,10 @@ Add a subscriber (destination URL) to a pipeline.
 
 Remove a subscriber from a pipeline.
 
-| Auth    | Response                                             |
-| ------- | ---------------------------------------------------- |
-| API key | 204 – No Content                                     |
-| API key | 404 – `Pipeline not found` or `Subscriber not found` |
+| Auth    | Response                     |
+| ------- | ---------------------------- |
+| API key | 204 – No Content             |
+| API key | 404 – `Subscriber not found` |
 
 ---
 
@@ -294,6 +295,11 @@ List jobs with optional filters.
 ]
 ```
 
+| Status | Error message                                                             |
+| ------ | ------------------------------------------------------------------------- |
+| 401    | `Unauthorized`                                                            |
+| 400    | `Invalid pipelineId`, `Invalid offset`, `Invalid limit`, `Invalid status` |
+
 ---
 
 #### `GET /api/jobs/:id`
@@ -329,10 +335,12 @@ Same shape as job object in list, plus `delivery_attempts` array:
 }
 ```
 
-| Status | Error message   |
-| ------ | --------------- |
-| 200    | Success         |
-| 404    | `Job not found` |
+| Status | Error message     |
+| ------ | ----------------- |
+| 200    | Success           |
+| 401    | `Unauthorized`    |
+| 400    | `Invalid request` |
+| 404    | `Job not found`   |
 
 ---
 
