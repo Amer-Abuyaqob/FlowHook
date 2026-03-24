@@ -8,8 +8,8 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  tests:
-    name: Tests
+  unit:
+    name: Unit Tests
     runs-on: ubuntu-latest
     env:
       API_KEY: test-api-key
@@ -29,11 +29,51 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Run vitest unit tests
-        run: npm test
+      - name: Run vitest unit tests only
+        run: npx vitest --run --exclude "src/**/*.integration.test.ts"
 
-      - name: Run coverage
+      - name: Run unit coverage
         run: npm run test:coverage
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: test-api-key
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flowhook_test
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: flowhook_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d flowhook_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run database migrations
+        run: npm run db:migrate
+
+      - name: Run integration tests only
+        run: npx vitest --run "src/**/*.integration.test.ts"
 
   style:
     name: Style
