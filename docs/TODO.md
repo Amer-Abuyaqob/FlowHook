@@ -643,33 +643,33 @@ These are installed via `npm install` when you create the project — no global 
 
 ## Phase 3a: Filter Action (branch `feat/filter`)
 
-- [ ] **Create branch:** `git checkout main && git pull && git checkout -b feat/filter`
+- [x] **Create branch:** `git checkout main && git pull && git checkout -b feat/filter`
 
 ---
 
 ### 3a.1 Implement Filter
 
-- [ ] **Implement `src/services/actions/filter.ts`**
-  - [ ] Parse `action_config.conditions` — array of `{ path, operator, value }`
-  - [ ] Operators: `eq`, `neq`, `exists`, `contains`
-  - [ ] Get value at path from payload (e.g. `payload.event.type`)
-  - [ ] Evaluate each condition (AND)
-  - [ ] If all match → return `{ result: payload }` (keep)
-  - [ ] If any fail → return `{ filtered: true }` (drop)
-- [ ] **Unit tests**
-  - [ ] `eq` matches
-  - [ ] `eq` no match → filtered
-  - [ ] `neq` matches
-  - [ ] `exists` for present/missing
-  - [ ] `contains` for string/array
-  - [ ] Multiple conditions ANDed
+- [x] **Implement `src/services/actions/filter.ts`**
+  - [x] Parse `action_config.conditions` — array of `{ path, operator, value }`
+  - [x] Operators: `eq`, `neq`, `exists`, `contains`
+  - [x] Get value at path from payload (e.g. `payload.event.type`)
+  - [x] Evaluate each condition (AND)
+  - [x] If all match → return `{ result: payload }` (keep)
+  - [x] If any fail → return `{ filtered: true }` (drop)
+- [x] **Unit tests**
+  - [x] `eq` matches
+  - [x] `eq` no match → filtered
+  - [x] `neq` matches
+  - [x] `exists` for present/missing
+  - [x] `contains` for string/array
+  - [x] Multiple conditions ANDed
 
 ---
 
 ### Phase 3a Complete When
 
-- [ ] Filter action works; dropped events mark job `filtered`
-- [ ] Merge `feat/filter` into `main`
+- [x] Filter action works; dropped events mark job `filtered`
+- [x] Merge `feat/filter` into `main`
 
 ---
 
