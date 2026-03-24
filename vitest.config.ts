@@ -7,6 +7,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     setupFiles: ["./vitest.setup.ts"],
+    fileParallelism: false,
+    exclude: ["dist/**", "node_modules/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
