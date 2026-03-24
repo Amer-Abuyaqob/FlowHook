@@ -52,7 +52,7 @@ npm run build
 npm start
 ```
 
-The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8), **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE), **subscriber routes** at **`/api/pipelines/:id/subscribers`** (POST, DELETE), and **webhook ingestion** at **`POST /webhooks/:slug`** (unauthenticated; enqueues a `pending` job). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline and subscriber routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
+The server exposes a **health check** at **`GET /api/healthz`** (plain text **`OK`**, UTF-8), **pipeline CRUD** at **`/api/pipelines`** (POST, GET, PUT, DELETE), **subscriber routes** at **`/api/pipelines/:id/subscribers`** (POST, DELETE), **job queries** at **`GET /api/jobs`** and **`GET /api/jobs/:id`** (auth required; list supports filters and pagination), and **webhook ingestion** at **`POST /webhooks/:slug`** (unauthenticated; enqueues a `pending` job). **`GET /`** redirects to **`/app/`**, which serves the **API documentation** (HTML + **`styles.css`**, **dark theme**) from **`src/app`** (copied to **`dist/client`** on build). The web UI mirrors `docs/API.md` with endpoint status badges (Available/Planned). **API key auth** (Bearer or X-API-Key) is required for pipeline, subscriber, and job routes. Tests run with `npm test` (DB integration tests require `DATABASE_URL` and `API_KEY`).
 
 ### Quick Start — Docker
 
@@ -66,19 +66,21 @@ Migrations run automatically before the API and worker start. Default API key: `
 
 ## 🚀 Quick Start — API Usage
 
-| Method   | Path                                    | Description                       |
-| -------- | --------------------------------------- | --------------------------------- |
-| `GET`    | `/`                                     | Redirects to `/app/` (302)        |
-| `GET`    | `/app/`                                 | API documentation (HTML)          |
-| `GET`    | `/api/healthz`                          | Liveness (text OK)                |
-| `POST`   | `/api/pipelines`                        | Create pipeline (auth required)   |
-| `GET`    | `/api/pipelines`                        | List pipelines (auth required)    |
-| `GET`    | `/api/pipelines/:id`                    | Get pipeline by id (auth)         |
-| `PUT`    | `/api/pipelines/:id`                    | Update pipeline (auth)            |
-| `DELETE` | `/api/pipelines/:id`                    | Delete pipeline (auth)            |
-| `POST`   | `/api/pipelines/:id/subscribers`        | Add subscriber (auth required)    |
-| `DELETE` | `/api/pipelines/:id/subscribers/:subId` | Remove subscriber (auth required) |
-| `POST`   | `/webhooks/:slug`                       | Webhook ingestion (unprotected)   |
+| Method   | Path                                    | Description                                                   |
+| -------- | --------------------------------------- | ------------------------------------------------------------- |
+| `GET`    | `/`                                     | Redirects to `/app/` (302)                                    |
+| `GET`    | `/app/`                                 | API documentation (HTML)                                      |
+| `GET`    | `/api/healthz`                          | Liveness (text OK)                                            |
+| `POST`   | `/api/pipelines`                        | Create pipeline (auth required)                               |
+| `GET`    | `/api/pipelines`                        | List pipelines (auth required)                                |
+| `GET`    | `/api/pipelines/:id`                    | Get pipeline by id (auth)                                     |
+| `PUT`    | `/api/pipelines/:id`                    | Update pipeline (auth)                                        |
+| `DELETE` | `/api/pipelines/:id`                    | Delete pipeline (auth)                                        |
+| `POST`   | `/api/pipelines/:id/subscribers`        | Add subscriber (auth required)                                |
+| `DELETE` | `/api/pipelines/:id/subscribers/:subId` | Remove subscriber (auth required)                             |
+| `GET`    | `/api/jobs`                             | List jobs — filters: pipelineId, status, limit, offset (auth) |
+| `GET`    | `/api/jobs/:id`                         | Job detail + `delivery_attempts` (auth)                       |
+| `POST`   | `/webhooks/:slug`                       | Webhook ingestion (unprotected)                               |
 
 Examples:
 
@@ -128,4 +130,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 4 is now complete. Delivery is fully implemented with subscriber POST fanout, per-attempt persistence in `delivery_attempts`, strict final job status semantics (`completed` only when all subscribers succeed; otherwise `failed`), and env-configurable retries/timeouts (`DELIVERY_MAX_ATTEMPTS`, `DELIVERY_BASE_DELAY_MS`, `DELIVERY_REQUEST_TIMEOUT_MS`). Unit and integration coverage now verify success, retry, and failure delivery paths. Phase 5 (Job API endpoints) remains pending. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 5 (Job API) is complete: `GET /api/jobs` and `GET /api/jobs/:id` are implemented with API-key auth, snake_case JSON per `docs/API.md`, list filters and pagination (default limit 50, max 100), newest-first ordering, and delivery history on the detail route. Phase 4 delivery behavior is unchanged (subscriber POST, retries, `delivery_attempts`). See [personal/PR.md](personal/PR.md) for PR notes.
