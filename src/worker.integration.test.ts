@@ -5,9 +5,15 @@
  * Skipped when DATABASE_URL or API_KEY is not set.
  */
 import request from "supertest";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
-import { assertDbConnection, db, jobs, pipelines } from "./db/index.js";
+import {
+  assertDbConnection,
+  db,
+  deliveryAttempts,
+  jobs,
+  pipelines,
+} from "./db/index.js";
 import { createApp } from "./index.js";
 import { processOneJob } from "./services/worker.js";
 
@@ -21,6 +27,10 @@ function authHeader(): { Authorization: string } {
 }
 
 describe.skipIf(!hasDbUrl || !hasApiKey)("worker integration", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   beforeEach(async () => {
     assertDbConnection(db);
     await db.delete(pipelines);
@@ -70,6 +80,20 @@ describe.skipIf(!hasDbUrl || !hasApiKey)("worker integration", () => {
       .expect(201);
 
     return { slug: res.body.slug };
+  }
+
+  async function addSubscriber(
+    pipelineId: string,
+    url = "https://subscriber.example/webhook"
+  ): Promise<void> {
+    await request(createApp())
+      .post(`/api/pipelines/${pipelineId}/subscribers`)
+      .set(authHeader())
+      .send({
+        url,
+        headers: { "X-Custom-Header": "value" },
+      })
+      .expect(201);
   }
 
   it("processOneJob completes a transform job and stores the result", async () => {
@@ -164,5 +188,98 @@ describe.skipIf(!hasDbUrl || !hasApiKey)("worker integration", () => {
     });
     expect(rows[0].processingStartedAt).toBeTruthy();
     expect(rows[0].processingEndedAt).toBeTruthy();
+  });
+
+  it("processOneJob completes when subscriber delivery succeeds and stores attempts", async () => {
+    const createRes = await request(createApp())
+      .post("/api/pipelines")
+      .set(authHeader())
+      .send({
+        name: "Worker Delivery Success Pipeline",
+        action_type: "transform",
+        action_config: { mappings: [{ from: "x", to: "y" }] },
+      })
+      .expect(201);
+
+    const pipelineId = createRes.body.id as string;
+    const slug = createRes.body.slug as string;
+    await addSubscriber(pipelineId);
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      status: 200,
+    } as Response);
+
+    const enqueueRes = await request(createApp())
+      .post(`/webhooks/${slug}`)
+      .send({ x: 555 })
+      .expect(202);
+    const jobId = enqueueRes.body.jobId as string;
+
+    const processed = await processOneJob();
+    expect(processed).toBe(true);
+
+    assertDbConnection(db);
+    const jobRows = await db.select().from(jobs).where(eq(jobs.id, jobId));
+    expect(jobRows).toHaveLength(1);
+    expect(jobRows[0].status).toBe("completed");
+    expect(jobRows[0].result).toEqual({ y: 555 });
+
+    const attemptRows = await db
+      .select()
+      .from(deliveryAttempts)
+      .where(eq(deliveryAttempts.jobId, jobId));
+    expect(attemptRows).toHaveLength(1);
+    expect(attemptRows[0]).toMatchObject({
+      attemptNumber: 1,
+      statusCode: 200,
+      success: true,
+      errorMessage: null,
+    });
+  });
+
+  it("processOneJob fails strictly when subscriber delivery exhausts retries", async () => {
+    const createRes = await request(createApp())
+      .post("/api/pipelines")
+      .set(authHeader())
+      .send({
+        name: "Worker Delivery Failure Pipeline",
+        action_type: "transform",
+        action_config: { mappings: [{ from: "x", to: "y" }] },
+      })
+      .expect(201);
+
+    const pipelineId = createRes.body.id as string;
+    const slug = createRes.body.slug as string;
+    await addSubscriber(pipelineId);
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: false,
+      status: 503,
+    } as Response);
+
+    const enqueueRes = await request(createApp())
+      .post(`/webhooks/${slug}`)
+      .send({ x: 999 })
+      .expect(202);
+    const jobId = enqueueRes.body.jobId as string;
+
+    const processed = await processOneJob();
+    expect(processed).toBe(true);
+
+    assertDbConnection(db);
+    const jobRows = await db.select().from(jobs).where(eq(jobs.id, jobId));
+    expect(jobRows).toHaveLength(1);
+    expect(jobRows[0].status).toBe("failed");
+    expect(jobRows[0].result).toEqual({ y: 999 });
+
+    const attemptRows = await db
+      .select()
+      .from(deliveryAttempts)
+      .where(eq(deliveryAttempts.jobId, jobId));
+    expect(attemptRows).toHaveLength(3);
+    expect(attemptRows.map((row) => row.attemptNumber)).toEqual([1, 2, 3]);
+    expect(attemptRows.every((row) => row.success === false)).toBe(true);
+    expect(attemptRows[0].statusCode).toBe(503);
   });
 });
