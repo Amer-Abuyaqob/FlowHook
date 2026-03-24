@@ -702,40 +702,40 @@ These are installed via `npm install` when you create the project — no global 
 
 ## Phase 4: Delivery (branch `feat/delivery`)
 
-- [ ] **Create branch:** `git checkout main && git pull && git checkout -b feat/delivery`
+- [x] **Create branch:** `git checkout main && git pull && git checkout -b feat/delivery`
 
 ---
 
 ### 4.1 Delivery Implementation
 
-- [ ] **Implement `src/lib/delivery.ts`**
-  - [ ] For each subscriber: POST to `subscriber.url` with `Content-Type: application/json`
-  - [ ] Body = processed result (JSON.stringify)
-  - [ ] Add headers from `subscriber.headers` (JSONB)
-  - [ ] Retry: 3 attempts, exponential backoff (1s, 2s, 4s)
-  - [ ] On 2xx → success, record in delivery_attempts
-  - [ ] On failure → record attempt, retry
-  - [ ] After all retries fail → record final failure
-- [ ] **Insert delivery_attempts**
-  - [ ] For each attempt: job_id, subscriber_id, attempt_number, status_code, success, error_message, created_at
-- [ ] **Wire into worker**
-  - [ ] Replace delivery stub with real `deliverToSubscribers`
-  - [ ] Only deliver when job not filtered
-  - [ ] Mark job `failed` if any subscriber fails after retries? Or `completed` with some failed? (Define: e.g. job completed if at least one delivered, or strict: all must succeed)
-- [ ] **Unit test retry/backoff**
-  - [ ] Mock HTTP: first fails, second succeeds
-  - [ ] Verify backoff timing
-- [ ] **Integration test**
-  - [ ] Use mock HTTP server (e.g. nock or local express); verify POST received with correct body and headers
+- [x] **Implement `src/lib/delivery.ts`**
+  - [x] For each subscriber: POST to `subscriber.url` with `Content-Type: application/json`
+  - [x] Body = processed result (JSON.stringify)
+  - [x] Add headers from `subscriber.headers` (JSONB)
+  - [x] Retry: configurable attempts + exponential backoff (defaults: 3 attempts, 1s/2s/4s)
+  - [x] On 2xx → success, record in delivery_attempts
+  - [x] On failure → record attempt, retry
+  - [x] After all retries fail → record final failure
+- [x] **Insert delivery_attempts**
+  - [x] For each attempt: job_id, subscriber_id, attempt_number, status_code, success, error_message, created_at
+- [x] **Wire into worker**
+  - [x] Replace delivery stub with real `deliverToSubscribers`
+  - [x] Only deliver when job not filtered
+  - [x] Strict policy: mark job `failed` if any subscriber fails after retries
+- [x] **Unit test retry/backoff**
+  - [x] Mock HTTP: first fails, second succeeds
+  - [x] Verify backoff call behavior
+- [x] **Integration test**
+  - [x] Mock outbound fetch responses; verify strict status and delivery_attempts persistence
 
 ---
 
 ### Phase 4 Complete When
 
-- [ ] Full flow: webhook → job → action → delivery to subscribers
-- [ ] delivery_attempts populated
-- [ ] Retry works on transient failure
-- [ ] Merge `feat/delivery` into `main`
+- [x] Full flow: webhook → job → action → delivery to subscribers
+- [x] delivery_attempts populated
+- [x] Retry works on transient failure
+- [x] Merge `feat/delivery` into `main`
 
 ---
 

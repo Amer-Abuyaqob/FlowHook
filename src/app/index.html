@@ -59,6 +59,9 @@
                 <li><a href="#webhooks">Webhooks</a></li>
               </ul>
             </li>
+            <li>
+              <a href="#delivery-runtime-behavior">Delivery Runtime Behavior</a>
+            </li>
             <li><a href="#action-config-shapes">Action Config Shapes</a></li>
             <li><a href="#static-assets">Static Assets</a></li>
           </ul>
@@ -687,6 +690,53 @@
               </tr>
             </tbody>
           </table>
+
+          <hr />
+
+          <h3 id="delivery-runtime-behavior">Delivery Runtime Behavior</h3>
+          <ul>
+            <li>
+              Subscriber delivery uses <code>POST</code> with JSON body and
+              merged custom subscriber headers.
+            </li>
+            <li>
+              Retry policy is configurable via environment variables:
+              <ul>
+                <li>
+                  <code>DELIVERY_MAX_ATTEMPTS</code> (default <code>3</code>)
+                </li>
+                <li>
+                  <code>DELIVERY_BASE_DELAY_MS</code> (default
+                  <code>1000</code>)
+                </li>
+                <li>
+                  <code>DELIVERY_REQUEST_TIMEOUT_MS</code> (default
+                  <code>5000</code>)
+                </li>
+              </ul>
+            </li>
+            <li>
+              Backoff is exponential per subscriber attempt:
+              <code>baseDelay * 2^(attempt-1)</code>.
+            </li>
+            <li>
+              Every attempt is persisted in <code>delivery_attempts</code> with
+              HTTP status code or error message.
+            </li>
+            <li>
+              Job status semantics are strict for delivery:
+              <ul>
+                <li>
+                  <code>completed</code> only when all subscribers succeed
+                  within retries
+                </li>
+                <li>
+                  <code>failed</code> when any subscriber exhausts retries
+                  without success
+                </li>
+              </ul>
+            </li>
+          </ul>
 
           <hr />
 

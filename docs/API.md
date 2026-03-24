@@ -369,6 +369,21 @@ Optional `Job-Id` header: same UUID for programmatic retrieval.
 
 ---
 
+## Delivery Runtime Behavior
+
+- Subscriber delivery uses `POST` with JSON body and merged custom subscriber headers.
+- Retry policy is configurable via env vars:
+  - `DELIVERY_MAX_ATTEMPTS` (default `3`)
+  - `DELIVERY_BASE_DELAY_MS` (default `1000`)
+  - `DELIVERY_REQUEST_TIMEOUT_MS` (default `5000`)
+- Backoff is exponential per subscriber attempt: `baseDelay * 2^(attempt-1)`.
+- Every attempt is persisted in `delivery_attempts` with status code or error message.
+- Job status semantics are strict for delivery:
+  - `completed` only when all subscribers succeed within retries
+  - `failed` when any subscriber exhausts retries without success
+
+---
+
 ## Action Config Shapes
 
 ### transform

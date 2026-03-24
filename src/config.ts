@@ -23,6 +23,19 @@ export type WorkerConfig = {
 };
 
 /**
+ * Delivery configuration.
+ *
+ * @property maxAttempts - Maximum number of delivery attempts per subscriber (default 3).
+ * @property baseDelayMs - Base retry delay in milliseconds for exponential backoff (default 1000).
+ * @property requestTimeoutMs - HTTP request timeout for each delivery attempt in milliseconds (default 5000).
+ */
+export type DeliveryConfig = {
+  maxAttempts: number;
+  baseDelayMs: number;
+  requestTimeoutMs: number;
+};
+
+/**
  * Typed application configuration.
  *
  * @property port - HTTP server port (default 3000).
@@ -30,6 +43,7 @@ export type WorkerConfig = {
  * @property apiKey - API key for authenticated endpoints (required).
  * @property baseUrl - Base URL for webhook endpoints; defaults to http://localhost:PORT when not set.
  * @property worker - Worker poll interval for job processing.
+ * @property delivery - Delivery retry and timeout settings.
  */
 export type Config = {
   port: number;
@@ -37,6 +51,7 @@ export type Config = {
   apiKey: string;
   baseUrl: string;
   worker: WorkerConfig;
+  delivery: DeliveryConfig;
 };
 
 /**
@@ -98,6 +113,24 @@ export function parseWorkerPollIntervalMs(value: string | undefined): number {
 }
 
 /**
+ * Parses a positive integer with fallback default when missing or invalid.
+ *
+ * @param value - Raw env value.
+ * @param defaultValue - Fallback when parsing fails.
+ * @returns Parsed positive integer or the default value.
+ * @internal Exported for unit testing.
+ */
+export function parsePositiveIntOrDefault(
+  value: string | undefined,
+  defaultValue: number
+): number {
+  if (value === undefined || value === "") return defaultValue;
+  const n = Number.parseInt(value, 10);
+  if (!Number.isFinite(n) || n < 1) return defaultValue;
+  return n;
+}
+
+/**
  * Loads and validates configuration from environment variables.
  *
  * @returns Validated config object.
@@ -109,12 +142,29 @@ function loadConfig(): Config {
   const workerPollIntervalMs = parseWorkerPollIntervalMs(
     process.env.WORKER_POLL_INTERVAL_MS
   );
+  const deliveryMaxAttempts = parsePositiveIntOrDefault(
+    process.env.DELIVERY_MAX_ATTEMPTS,
+    3
+  );
+  const deliveryBaseDelayMs = parsePositiveIntOrDefault(
+    process.env.DELIVERY_BASE_DELAY_MS,
+    1000
+  );
+  const deliveryRequestTimeoutMs = parsePositiveIntOrDefault(
+    process.env.DELIVERY_REQUEST_TIMEOUT_MS,
+    5000
+  );
   return {
     port,
     db: { url: getOptionalEnv(process.env.DATABASE_URL) },
     apiKey: requireEnv(process.env.API_KEY, "API_KEY"),
     baseUrl: baseUrlEnv ?? `http://localhost:${port}`,
     worker: { pollIntervalMs: workerPollIntervalMs },
+    delivery: {
+      maxAttempts: deliveryMaxAttempts,
+      baseDelayMs: deliveryBaseDelayMs,
+      requestTimeoutMs: deliveryRequestTimeoutMs,
+    },
   };
 }
 

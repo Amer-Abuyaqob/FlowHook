@@ -1,6 +1,6 @@
 /**
  * Worker processing loop: polls for pending jobs, runs pipeline actions, updates status,
- * and delivers to subscribers (Phase 2: delivery is stub).
+ * and delivers to subscribers with strict failure semantics.
  */
 import { assertDbConnection, db } from "../db/index.js";
 import { updateJob } from "../db/queries/jobs.js";
@@ -61,12 +61,17 @@ export async function processOneJob(): Promise<boolean> {
         processingEndedAt: new Date(),
       });
     } else {
+      const deliverySummary = await deliverToSubscribers(
+        subscribers,
+        outcome.result,
+        job.id
+      );
+      const finalStatus = deliverySummary.allSucceeded ? "completed" : "failed";
       await updateJob(db, job.id, {
-        status: "completed",
+        status: finalStatus,
         result: outcome.result,
         processingEndedAt: new Date(),
       });
-      await deliverToSubscribers(subscribers, outcome.result, job.id);
     }
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
