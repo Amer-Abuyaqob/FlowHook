@@ -747,29 +747,29 @@ These are installed via `npm install` when you create the project — no global 
 
 ### 5.1 Job Query Service
 
-- [ ] **Add to `src/services/job.ts`**
-  - [ ] `getJobById(id)` — job + delivery_attempts (join or separate query)
-  - [ ] `listJobs(filters: { pipelineId?, status?, limit?, offset? })` — paginated list
+- [x] **Add to `src/services/job.ts`**
+  - [x] `getJobWithAttempts(id)` — job + delivery_attempts (separate queries)
+  - [x] `listJobsByParams(filters)` — paginated list
 
 ---
 
 ### 5.2 Job Routes
 
-- [ ] **Create `src/routes/jobs.ts`**
-  - [ ] `GET /api/jobs/:id` — get job with delivery attempts (404 if not found)
-  - [ ] `GET /api/jobs` — list with query params pipelineId, status, limit, offset
-- [ ] **Apply auth middleware**
-- [ ] **Integration tests**
-  - [ ] Get job by id
-  - [ ] List jobs with filters
-  - [ ] 401 without API key
+- [x] **Create `src/routes/jobs.ts`**
+  - [x] `GET /api/jobs/:id` — get job with delivery attempts (404 if not found)
+  - [x] `GET /api/jobs` — list with query params pipelineId, status, limit, offset
+- [x] **Apply auth middleware**
+- [x] **Integration tests**
+  - [x] Get job by id
+  - [x] List jobs with filters
+  - [x] 401 without API key
 
 ---
 
 ### Phase 5 Complete When
 
-- [ ] Job API works
-- [ ] Merge `feat/job-api` into `main`
+- [x] Job API works
+- [x] Merge `feat/job-api` into `main`
 
 ---
 
