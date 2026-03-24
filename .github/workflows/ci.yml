@@ -32,8 +32,8 @@ jobs:
       - name: Run vitest unit tests only
         run: npx vitest --run --exclude "src/**/*.integration.test.ts"
 
-      - name: Run unit coverage
-        run: npm run test:coverage
+      - name: Run unit coverage only
+        run: npx vitest --run --coverage --exclude "src/**/*.integration.test.ts"
 
   integration:
     name: Integration Tests
@@ -74,6 +74,9 @@ jobs:
 
       - name: Run integration tests only
         run: npx vitest --run integration.test.ts
+
+      - name: Run integration coverage only
+        run: npx vitest --run --coverage integration.test.ts
 
   style:
     name: Style
