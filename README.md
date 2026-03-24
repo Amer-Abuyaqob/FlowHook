@@ -125,4 +125,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 and Phase 2 are complete. Phase 3.a (Filter Action) is now complete: `runFilter` is fully implemented (operators `eq`, `neq`, `exists`, `contains`), filter outcomes are wired through dispatcher and worker flow, and tests now verify both `completed` (match) and `filtered` (no-match) job states. Template action and delivery are still pending in later phases. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 1 and Phase 2 are complete. Phase 3 is now complete: `runFilter` is fully implemented (operators `eq`, `neq`, `exists`, `contains`) and `runTemplate` is now implemented with `{{path}}` rendering into `{ result: { body: string } }`, including missing-path fallback to empty string. Dispatcher and worker integration tests now verify transform, filter, and template processing paths. Delivery and Job API remain pending in later phases. See [personal/PR.md](personal/PR.md) for PR notes.
