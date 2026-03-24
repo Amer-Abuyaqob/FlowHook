@@ -30,13 +30,16 @@ npm install
 
 Configure environment variables (in `.env` — do not commit). Copy from `.env.example` if available:
 
-| Variable                  | Purpose                                                      |
-| ------------------------- | ------------------------------------------------------------ |
-| `API_KEY`                 | API key for protected routes (required)                      |
-| `DATABASE_URL`            | PostgreSQL connection string (required for CRUD)             |
-| `BASE_URL`                | Base URL for webhook URLs (default: `http://localhost:PORT`) |
-| `PORT`                    | HTTP server port (default 8080)                              |
-| `WORKER_POLL_INTERVAL_MS` | Worker poll interval in ms (default 1000)                    |
+| Variable                      | Purpose                                                       |
+| ----------------------------- | ------------------------------------------------------------- |
+| `API_KEY`                     | API key for protected routes (required)                       |
+| `DATABASE_URL`                | PostgreSQL connection string (required for CRUD)              |
+| `BASE_URL`                    | Base URL for webhook URLs (default: `http://localhost:PORT`)  |
+| `PORT`                        | HTTP server port (default 8080)                               |
+| `WORKER_POLL_INTERVAL_MS`     | Worker poll interval in ms (default 1000)                     |
+| `DELIVERY_MAX_ATTEMPTS`       | Max attempts per subscriber delivery (default 3)              |
+| `DELIVERY_BASE_DELAY_MS`      | Base delay in ms for exponential retry backoff (default 1000) |
+| `DELIVERY_REQUEST_TIMEOUT_MS` | HTTP timeout in ms per delivery attempt (default 5000)        |
 
 ## 🚀 Quick Start
 
@@ -125,4 +128,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Phase 1 and Phase 2 are complete. Phase 3 is now complete: `runFilter` is fully implemented (operators `eq`, `neq`, `exists`, `contains`) and `runTemplate` is now implemented with `{{path}}` rendering into `{ result: { body: string } }`, including missing-path fallback to empty string. Dispatcher and worker integration tests now verify transform, filter, and template processing paths. Delivery and Job API remain pending in later phases. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Phase 4 is now complete. Delivery is fully implemented with subscriber POST fanout, per-attempt persistence in `delivery_attempts`, strict final job status semantics (`completed` only when all subscribers succeed; otherwise `failed`), and env-configurable retries/timeouts (`DELIVERY_MAX_ATTEMPTS`, `DELIVERY_BASE_DELAY_MS`, `DELIVERY_REQUEST_TIMEOUT_MS`). Unit and integration coverage now verify success, retry, and failure delivery paths. Phase 5 (Job API endpoints) remains pending. See [personal/PR.md](personal/PR.md) for PR notes.
