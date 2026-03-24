@@ -31,12 +31,11 @@ describe("runAction", () => {
     expect(outcome).toEqual({ filtered: true });
   });
 
-  it("template: throws 'Template action is not implemented'", async () => {
+  it("template: delegates and returns rendered body result", async () => {
     const config = { template: "Hello {{name}}" };
     const payload = { name: "World" };
-    await expect(runAction("template", config, payload)).rejects.toThrow(
-      "Template action is not implemented"
-    );
+    const outcome = await runAction("template", config, payload);
+    expect(outcome).toEqual({ result: { body: "Hello World" } });
   });
 
   it("unknown action type: throws 'Unknown action type'", async () => {
