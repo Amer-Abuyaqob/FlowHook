@@ -23,7 +23,7 @@ services:
     environment:
       PORT: 8080
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
-      API_KEY: ${API_KEY:-dev-api-key}
+      API_KEY: ${API_KEY:-any-api-key}
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,7 +45,7 @@ services:
     command: node dist/worker.js
     environment:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
-      API_KEY: ${API_KEY:-dev-api-key}
+      API_KEY: ${API_KEY:-any-api-key}
     depends_on:
       postgres:
         condition: service_healthy
