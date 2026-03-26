@@ -1,0 +1,391 @@
+{
+  "info": {
+    "name": "FlowHook",
+    "description": "FlowHook Postman collection for testing pipelines, subscribers, webhook ingestion, and job status.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health (unauth)",
+      "item": [
+        {
+          "name": "GET /api/healthz",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/healthz",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "healthz"],
+              "query": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pipelines (auth)",
+      "item": [
+        {
+          "name": "POST /api/pipelines (create transform)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "pipelines"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Transform Pipeline\",\n  \"action_type\": \"transform\",\n  \"action_config\": {\n    \"mappings\": [\n      { \"from\": \"x\", \"to\": \"y\" }\n    ]\n  }\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "if (json && json.id) pm.environment.set(\"pipelineId\", json.id);",
+                  "if (json && json.slug) pm.environment.set(\"pipelineSlug\", json.slug);",
+                  "",
+                  "pm.test(\"creates pipeline and captures pipelineId/pipelineSlug\", function () {",
+                  "  pm.expect(json).to.have.property(\"id\");",
+                  "  pm.expect(json).to.have.property(\"slug\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /api/pipelines (list)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "pipelines"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              }
+            ]
+          }
+        },
+        {
+          "name": "GET /api/pipelines/:id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines/{{pipelineId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "pipelines", "{{pipelineId}}"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              }
+            ]
+          }
+        },
+        {
+          "name": "PUT /api/pipelines/:id (optional)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines/{{pipelineId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "pipelines", "{{pipelineId}}"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Transform Pipeline (Updated)\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/pipelines/:id (optional)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines/{{pipelineId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "pipelines", "{{pipelineId}}"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscribers (auth)",
+      "item": [
+        {
+          "name": "POST /api/pipelines/:id/subscribers (add)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines/{{pipelineId}}/subscribers",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "pipelines", "{{pipelineId}}", "subscribers"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://postman-echo.com/post\",\n  \"headers\": {\n    \"X-FlowHook-Test\": \"postman\"\n  }\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "",
+                  "if (json && json.id) pm.environment.set(\"subscriberId\", json.id);",
+                  "",
+                  "pm.test(\"creates subscriber and captures subscriberId\", function () {",
+                  "  pm.expect(json).to.have.property(\"id\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /api/pipelines/:id/subscribers/:subscriberId (optional)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/pipelines/{{pipelineId}}/subscribers/{{subscriberId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": [
+                "api",
+                "pipelines",
+                "{{pipelineId}}",
+                "subscribers",
+                "{{subscriberId}}"
+              ],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhooks (unauth)",
+      "item": [
+        {
+          "name": "POST /webhooks/:slug (ingest for transform pipeline)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/webhooks/{{pipelineSlug}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["webhooks", "{{pipelineSlug}}"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"x\": 123,\n  \"other\": \"ignored\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const headerJobId = pm.response.headers.get(\"Job-Id\");",
+                  "",
+                  "const jobId = (json && json.jobId) ? json.jobId : headerJobId;",
+                  "if (jobId) pm.environment.set(\"jobId\", jobId);",
+                  "",
+                  "pm.test(\"enqueues job and captures jobId\", function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([202]);",
+                  "  pm.expect(jobId).to.be.a(\"string\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jobs (auth)",
+      "item": [
+        {
+          "name": "GET /api/jobs (list for pipeline, pending)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs?pipelineId={{pipelineId}}&status=pending&limit=10&offset=0",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "jobs"],
+              "query": [
+                { "key": "pipelineId", "value": "{{pipelineId}}" },
+                { "key": "status", "value": "pending" },
+                { "key": "limit", "value": "10" },
+                { "key": "offset", "value": "0" }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              }
+            ]
+          }
+        },
+        {
+          "name": "GET /api/jobs/:id (detail + delivery_attempts)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "jobs", "{{jobId}}"],
+              "query": []
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{apiKey}}",
+                "type": "text"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "dev-api-key",
+      "type": "string"
+    }
+  ]
+}
