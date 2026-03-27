@@ -62,7 +62,7 @@ docker compose up -d
 curl http://localhost:8080/api/healthz
 ```
 
-Migrations run automatically before the API and worker start. Default API key: `dev-api-key` (or set `API_KEY` env var).
+Migrations run automatically before the API and worker start. Default API key: `any-api-key` (or set `API_KEY` env var).
 
 ## 🚀 Quick Start — API Usage
 
@@ -91,6 +91,12 @@ curl http://localhost:8080/app/
 ```
 
 See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full roadmap.
+
+### Postman Testing Assets
+
+- Collection: `postman/FlowHook.postman_collection.json`
+- Environment: `postman/FlowHook.postman_environment.json`
+- Import both into Postman, then run requests in order to auto-capture `pipelineId`, `pipelineSlug`, `subscriberId`, and `jobId`.
 
 ## Tech Stack
 
@@ -123,6 +129,7 @@ npm run db.migrate  # Apply migrations
 
 - [Project overview](docs/PROJECT_DESC.md) — Architecture, workspace map
 - [API reference](docs/API.md) — Full endpoint docs with schemas
+- [Postman assets](postman) — Ready-to-import collection/environment for end-to-end API checks
 
 ## Architecture
 
@@ -135,4 +142,4 @@ Contributions are welcome! Fork the repo, open a pull request, and ensure tests 
 
 ---
 
-**Last Updated:** Default HTTP port is **8080** when `PORT` is unset or invalid (matches Docker Compose). API errors are normalized in `src/http/errorMessagePolicy.ts` with inventory in `docs/ERROR_INVENTORY.md`; `docs/API.md` and `/app/` include expanded error-response tables. README clarifies API key auth (Bearer or `X-API-Key`) and links architecture to `docs/DESIGN_DECISIONS.md`. See [personal/PR.md](personal/PR.md) for PR notes.
+**Last Updated:** Docker Compose default API key fallback is `any-api-key` for both API and worker services. Postman testing assets were added in `postman/FlowHook.postman_collection.json` and `postman/FlowHook.postman_environment.json` to streamline end-to-end API validation. API key auth remains supported via Bearer or `X-API-Key`; architecture details live in `docs/DESIGN_DECISIONS.md`. See [personal/PR.md](personal/PR.md) for PR notes.
