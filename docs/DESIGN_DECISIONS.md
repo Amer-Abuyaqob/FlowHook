@@ -1,10 +1,11 @@
 ---
-name: FlowHook Project Design
+
+## name: FlowHook Project Design
+
 overview: "A detailed design plan for FlowHook: architecture, schema, API structure, worker flow, and Docker/CI setup, incorporating all prior decisions (JSON transform + Filter + Template actions, Postgres queue, API keys, slugs, etc.)."
 lastReviewed: "2026-03-24"
 todos: []
 isProject: false
----
 
 # FlowHook Project Design Plan
 
@@ -13,6 +14,7 @@ This plan covers architecture, data model, API design, worker flow, and infrastr
 ---
 
 ## 1. Decisions Summary
+
 
 | Topic         | Choice                                                                                  |
 | ------------- | --------------------------------------------------------------------------------------- |
@@ -25,64 +27,12 @@ This plan covers architecture, data model, API design, worker flow, and infrastr
 | Webhook URL   | Slugs                                                                                   |
 | Slug          | Auto-generated from pipeline name; strict format (lowercase, letters, numbers, hyphens) |
 
+
 ---
 
 ## 2. High-Level Architecture
 
-```mermaid
-flowchart TB
-    subgraph External [External]
-        WebhookSender[Webhook Sender]
-        SubscriberEndpoint[Subscriber URLs]
-    end
-
-    subgraph FlowHook [FlowHook Service]
-        subgraph API [HTTP API]
-            WebhookIngest[POST /webhooks/:slug]
-            PipelineCRUD[Pipeline CRUD]
-            JobAPI[Job Status API]
-        end
-
-        subgraph Auth [Auth Layer]
-            ApiKeyMiddleware[API Key Middleware]
-        end
-
-        subgraph Queue [Queue Layer]
-            JobsTable[(jobs table)]
-        end
-
-        subgraph Worker [Background Worker]
-            JobPoller[Job Poller]
-            ActionRunner[Action Executor]
-            DeliveryRunner[Delivery Runner]
-        end
-
-        subgraph DB [Database]
-            Pipelines[(pipelines)]
-            Subscribers[(subscribers)]
-            DeliveryAttempts[(delivery_attempts)]
-        end
-    end
-
-    WebhookSender -->|POST webhook| WebhookIngest
-    WebhookIngest -->|validate pipeline exists| Pipelines
-    WebhookIngest -->|enqueue| JobsTable
-    WebhookIngest -->|202| WebhookSender
-
-    ApiKeyMiddleware --> PipelineCRUD
-    ApiKeyMiddleware --> JobAPI
-    PipelineCRUD --> Pipelines
-    JobAPI --> JobsTable
-    JobAPI --> DeliveryAttempts
-
-    JobPoller -->|claim job| JobsTable
-    JobPoller --> ActionRunner
-    ActionRunner -->|fetch pipeline + action config| Pipelines
-    ActionRunner -->|run transform/filter/template| ActionRunner
-    ActionRunner --> DeliveryRunner
-    DeliveryRunner -->|POST JSON + headers| SubscriberEndpoint
-    DeliveryRunner -->|record attempts| DeliveryAttempts
-```
+The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/DIAGRAMS.md).
 
 ---
 
@@ -90,7 +40,7 @@ flowchart TB
 
 ### 3.1 HTTP API (Express)
 
-- **Two entry points in one codebase:** `src/api/index.ts` (or `src/server.ts`) for the API, `src/worker/index.ts` for the worker. Same `package.json`, different scripts (`npm run start`, `npm run worker`).
+- **Two entry points in one codebase:** `src/index.ts` for the API, `src/index.ts` for the worker. Same `package.json`, different scripts (`npm run start`, `npm run worker`).
 - **Auth:** Middleware that validates `Authorization: Bearer <API_KEY>` or `X-API-Key: <API_KEY>` against `process.env.API_KEY`. Extract into `src/auth/validate.ts` with an interface like `validateAuth(req): Promise<{ valid: boolean; identity?: Identity }>` so swapping to JWT later only changes this module.
 - **Unprotected routes:** `GET /api/healthz`, `POST /webhooks/:slug` (webhook ingestion does NOT require API key; the slug identifies the pipeline).
 - **Protected routes (API key required):** All pipeline CRUD, all job query endpoints.
@@ -101,9 +51,9 @@ flowchart TB
 - **Flow (Q5: validate first, then 202):**
   1. Parse `slug` from path.
   2. Fetch pipeline by slug; if not found or inactive, return 404/400.
-  3. Optionally validate body is valid JSON (if your actions require JSON); if not, return 400.
+  3. Validate body is valid JSON.
   4. Insert row into `jobs` table with status `pending`, pipeline_id, raw payload.
-  5. Return 202 Accepted with optional `Job-Id` header.
+  5. Return 202 Accepted with `Job-Id` header.
   6. On DB/insert error, return 5xx.
 
 ### 3.3 Worker
@@ -132,6 +82,7 @@ flowchart TB
 
 **pipelines**
 
+
 | Column        | Type                    | Notes                                |
 | ------------- | ----------------------- | ------------------------------------ |
 | id            | UUID (PK)               | Default gen_random_uuid()            |
@@ -143,7 +94,9 @@ flowchart TB
 | created_at    | TIMESTAMPTZ             |                                      |
 | updated_at    | TIMESTAMPTZ             |                                      |
 
+
 **subscribers**
+
 
 | Column      | Type            | Notes                                             |
 | ----------- | --------------- | ------------------------------------------------- |
@@ -153,7 +106,9 @@ flowchart TB
 | headers     | JSONB           | Optional `{ "Authorization": "Bearer xxx", ... }` |
 | created_at  | TIMESTAMPTZ     |                                                   |
 
+
 **jobs**
+
 
 | Column                | Type        | Notes                                                      |
 | --------------------- | ----------- | ---------------------------------------------------------- |
@@ -167,7 +122,9 @@ flowchart TB
 | processing_started_at | TIMESTAMPTZ | Null until worker claims                                   |
 | processing_ended_at   | TIMESTAMPTZ | Null until done                                            |
 
+
 **delivery_attempts**
+
 
 | Column         | Type        | Notes                                      |
 | -------------- | ----------- | ------------------------------------------ |
@@ -179,6 +136,7 @@ flowchart TB
 | success        | BOOLEAN     | 2xx = true                                 |
 | error_message  | TEXT        | On failure                                 |
 | created_at     | TIMESTAMPTZ |                                            |
+
 
 ### 4.2 Action Config Shapes (JSONB)
 
@@ -201,6 +159,7 @@ flowchart TB
 
 ### 5.1 Pipelines (all require API key)
 
+
 | Method | Path                                         | Description                                                                                            |
 | ------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | POST   | /api/pipelines                               | Create pipeline (name, action_type, action_config); returns full object including slug and webhook URL |
@@ -211,24 +170,31 @@ flowchart TB
 | POST   | /api/pipelines/:id/subscribers               | Add subscriber (url, headers?)                                                                         |
 | DELETE | /api/pipelines/:id/subscribers/:subscriberId | Remove subscriber                                                                                      |
 
+
 ### 5.2 Jobs (all require API key)
+
 
 | Method | Path          | Description                                          |
 | ------ | ------------- | ---------------------------------------------------- |
 | GET    | /api/jobs/:id | Get job status, result, delivery attempts            |
 | GET    | /api/jobs     | List jobs (query: pipelineId, status, limit, offset) |
 
+
 ### 5.3 Webhooks (no auth)
+
 
 | Method | Path            | Description                                        |
 | ------ | --------------- | -------------------------------------------------- |
 | POST   | /webhooks/:slug | Ingest webhook; 202 on success, 4xx/5xx on failure |
 
+
 ### 5.4 Health
+
 
 | Method | Path         | Description     |
 | ------ | ------------ | --------------- |
 | GET    | /api/healthz | Plain text `OK` |
+
 
 ---
 
@@ -277,12 +243,6 @@ src/
 - **Env:** Pass `DATABASE_URL`, `API_KEY`, `PORT` via compose env or `.env`.
 - **Default runtime port:** `8080` for container and deployment consistency.
 
-### 7.2 GitHub Actions CI
-
-- **On push/PR:** Checkout, setup Node, `npm ci`, `npm run build`, `npm test`.
-- **DB for tests:** Use `postgres` service in Actions or in-memory SQLite for unit tests if you add that path; for integration tests, spawn Postgres in CI.
-- **CD deploy shape (current phase):** Deploy API service first. Use immutable image tags (`github.sha`) for traceable Cloud Run deploys, keep DB migrations in GitHub Actions, and keep platform access public while app routes remain API-key protected.
-
 ---
 
 ## 8. Design for Future Extensibility
@@ -290,14 +250,3 @@ src/
 - **Auth:** `validateAuth` returns `Identity`; v1 identity is `{ type: 'api_key' }`. Later: `{ type: 'jwt', userId, projectId }` and scope queries by project.
 - **Multiple API keys:** Add `api_keys` and `projects` tables; pipelines get `project_id`; middleware resolves key to project and passes `projectId` into services.
 - **HMAC signing:** `DeliverySigner` interface with `sign(payload: string): string`; v1 returns `''`; later implement HMAC and set `X-FlowHook-Signature` header.
-
----
-
-## 9. Files to Create or Update (later implementation)
-
-- **New:** `docs/DESIGN_DECISIONS.md` — save this plan + your Q1–Q5 answers.
-- **Update:** [package.json](package.json) — rename to FlowHook, add `worker` script.
-- **Update:** [drizzle.config.ts](drizzle.config.ts) — point to new schema.
-- **Update:** [.cursorrules](.cursorrules) — project focus, FlowHook-specific rules.
-- **Update:** [.env](.env) — add API_KEY, adjust DB_URL.
-- **New:** `docker-compose.yml`, `Dockerfile`, `.github/workflows/ci.yml`.
