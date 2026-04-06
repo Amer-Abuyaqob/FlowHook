@@ -15,7 +15,6 @@ This plan covers architecture, data model, API design, worker flow, and infrastr
 
 ## 1. Decisions Summary
 
-
 | Topic         | Choice                                                                                  |
 | ------------- | --------------------------------------------------------------------------------------- |
 | Actions       | JSON transform, Filter, Template render                                                 |
@@ -26,7 +25,6 @@ This plan covers architecture, data model, API design, worker flow, and infrastr
 | API key model | Single global key from env; design for per-project keys                                 |
 | Webhook URL   | Slugs                                                                                   |
 | Slug          | Auto-generated from pipeline name; strict format (lowercase, letters, numbers, hyphens) |
-
 
 ---
 
@@ -82,7 +80,6 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 
 **pipelines**
 
-
 | Column        | Type                    | Notes                                |
 | ------------- | ----------------------- | ------------------------------------ |
 | id            | UUID (PK)               | Default gen_random_uuid()            |
@@ -94,9 +91,7 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 | created_at    | TIMESTAMPTZ             |                                      |
 | updated_at    | TIMESTAMPTZ             |                                      |
 
-
 **subscribers**
-
 
 | Column      | Type            | Notes                                             |
 | ----------- | --------------- | ------------------------------------------------- |
@@ -106,9 +101,7 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 | headers     | JSONB           | Optional `{ "Authorization": "Bearer xxx", ... }` |
 | created_at  | TIMESTAMPTZ     |                                                   |
 
-
 **jobs**
-
 
 | Column                | Type        | Notes                                                      |
 | --------------------- | ----------- | ---------------------------------------------------------- |
@@ -122,9 +115,7 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 | processing_started_at | TIMESTAMPTZ | Null until worker claims                                   |
 | processing_ended_at   | TIMESTAMPTZ | Null until done                                            |
 
-
 **delivery_attempts**
-
 
 | Column         | Type        | Notes                                      |
 | -------------- | ----------- | ------------------------------------------ |
@@ -136,7 +127,6 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 | success        | BOOLEAN     | 2xx = true                                 |
 | error_message  | TEXT        | On failure                                 |
 | created_at     | TIMESTAMPTZ |                                            |
-
 
 ### 4.2 Action Config Shapes (JSONB)
 
@@ -159,7 +149,6 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 
 ### 5.1 Pipelines (all require API key)
 
-
 | Method | Path                                         | Description                                                                                            |
 | ------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | POST   | /api/pipelines                               | Create pipeline (name, action_type, action_config); returns full object including slug and webhook URL |
@@ -170,31 +159,24 @@ The canonical architecture and runtime diagrams live in [docs/DIAGRAMS.md](docs/
 | POST   | /api/pipelines/:id/subscribers               | Add subscriber (url, headers?)                                                                         |
 | DELETE | /api/pipelines/:id/subscribers/:subscriberId | Remove subscriber                                                                                      |
 
-
 ### 5.2 Jobs (all require API key)
-
 
 | Method | Path          | Description                                          |
 | ------ | ------------- | ---------------------------------------------------- |
 | GET    | /api/jobs/:id | Get job status, result, delivery attempts            |
 | GET    | /api/jobs     | List jobs (query: pipelineId, status, limit, offset) |
 
-
 ### 5.3 Webhooks (no auth)
-
 
 | Method | Path            | Description                                        |
 | ------ | --------------- | -------------------------------------------------- |
 | POST   | /webhooks/:slug | Ingest webhook; 202 on success, 4xx/5xx on failure |
 
-
 ### 5.4 Health
-
 
 | Method | Path         | Description     |
 | ------ | ------------ | --------------- |
 | GET    | /api/healthz | Plain text `OK` |
-
 
 ---
 

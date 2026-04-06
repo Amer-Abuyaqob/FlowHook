@@ -211,4 +211,6 @@ Fork the repository, open a pull request against **`main`**, and ensure **`npm t
 
 ## Authors
 
-- **Amer Abuyaqob** — [GitHub](https://github.com/Amer-Abuyaqob)
+- **Amer Abuyaqob** — [GitHub](https://github.com/Amer-Abuyaqob) — [LinkedIn](https://linkedin.com/in/amer-abuyaqob/)
+
+_Last updated: April 7, 2026 — README authors include GitHub and LinkedIn._
