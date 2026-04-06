@@ -35,6 +35,14 @@ jobs:
       - name: Run unit coverage only
         run: npx vitest --run --coverage --exclude "src/**/*.integration.test.ts"
 
+      - name: Upload unit coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          flags: unit
+          fail_ci_if_error: false
+
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
@@ -77,6 +85,14 @@ jobs:
 
       - name: Run integration coverage only
         run: npx vitest --run --coverage integration.test.ts
+
+      - name: Upload integration coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          flags: integration
+          fail_ci_if_error: false
 
   style:
     name: Style
